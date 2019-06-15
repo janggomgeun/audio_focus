@@ -1,0 +1,49 @@
+{
+  "name": "Audio Blur",
+  "version": "0.1.0",
+  "description": "Automatic Blur Effects to Inactive Tabs",
+  "icons": {
+    "256": "icon-main.png"
+  },
+  "author": "Woong Geun Jang",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "background":{
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_end",
+      "js": ["content/content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": {
+      "256": "icon-main.png"
+    },
+    "default_title": "Audio Blur",
+    "default_popup": "popup/popup.html"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "minimum_chrome_version": "32.0.0",
+  /* "storage": {
+    "managed_schema": "schema.json"
+  }, */
+  "chrome_url_overrides" : {
+      "newtab": "override/override.html"
+  },
+  "web_accessible_resources": ["content/page.js"],
+  "manifest_version": 2
+}
