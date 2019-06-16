@@ -4,15 +4,19 @@ chrome.runtime.onInstalled.addListener(function(details) {
   // chrome.tabs.create({url: "intro.html"})
 })
 
-chrome.runtime.onConnect.addListener(function(port) {
+chrome.browserAction.onClicked.addListener(function(tab) {
+  console.log('browser action is clicked')
+})
 
+chrome.runtime.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function(message) {
+
+  })
 })
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  var message = {
-    type: "REQUEST",
-    what: "UPDATE"
-  }
-  chrome.tabs.sendMessage(tabId, message)
+  chrome.tabs.sendMessage(tabId, {
+    what: "focuschanged"
+  })
 })
 chrome.tabs.onActivated.addListener(function(activeInfo) {})

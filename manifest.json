@@ -1,5 +1,5 @@
 {
-  "name": "Audio Blur",
+  "name": "Audio Focus",
   "version": "0.1.0",
   "description": "Automatic Blur Effects to Inactive Tabs",
   "icons": {
@@ -30,8 +30,7 @@
     "default_icon": {
       "256": "icon-main.png"
     },
-    "default_title": "Audio Blur",
-    "default_popup": "popup/popup.html"
+    "default_title": "Audio Blur"
   },
   "options_ui": {
     "page": "options/options.html",

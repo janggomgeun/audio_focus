@@ -2,14 +2,14 @@ const EFFECT_STATUS_NONE = 0
 const EFFECT_STATUS_ENABLED = 1
 const EFFECT_STATUS_DISABLED = 2
 
-function AudioBlurEffect(audioContext, mediaElement) {
+function AudioBlurEffectNode(audioContext, mediaElement) {
+  this.status = EFFECT_STATUS_NONE
   this.mediaElement = mediaElement
   this.audioContext = audioContext
   this.build(this.audioContext, this.mediaElement)
 }
 
-AudioBlurEffect.prototype.build = function (audioContext, mediaElement) {
-  this.status = EFFECT_STATUS_NONE
+AudioBlurEffectNode.prototype.build = function (audioContext, mediaElement) {
 
   this.sourceNode = audioContext.createMediaElementSource(mediaElement)
 
@@ -27,7 +27,7 @@ AudioBlurEffect.prototype.build = function (audioContext, mediaElement) {
   this.destinationNode = audioContext.destination
 };
 
-AudioBlurEffect.prototype.enable = function () {
+AudioBlurEffectNode.prototype.enable = function () {
   switch (this.status) {
     case EFFECT_STATUS_DISABLED:
     this.disconnect(this.sourceNode, this.destinationNode)
@@ -40,7 +40,7 @@ AudioBlurEffect.prototype.enable = function () {
   this.status = EFFECT_STATUS_ENABLED
 };
 
-AudioBlurEffect.prototype.disable = function () {
+AudioBlurEffectNode.prototype.disable = function () {
   switch (this.status) {
     case EFFECT_STATUS_ENABLED:
     this.disconnect(this.sourceNode, this.biquadFilterNode)
@@ -54,21 +54,21 @@ AudioBlurEffect.prototype.disable = function () {
   this.status = EFFECT_STATUS_DISABLED
 };
 
-AudioBlurEffect.prototype.connect = function (from, to) {
+AudioBlurEffectNode.prototype.connect = function (from, to) {
   from.connect(to)
 };
 
-AudioBlurEffect.prototype.disconnect = function (from, to) {
+AudioBlurEffectNode.prototype.disconnect = function (from, to) {
   from.disconnect(to)
 };
 
-function enableAllAudioBlurEffects(audioBlurNodesList) {
+function enableAllAudioBlurEffectNodes(audioBlurNodesList) {
   for (var i = 0; i < audioBlurNodesList.length; i++) {
     audioBlurNodesList[i].enable()
   }
 }
 
-function disableAllAudioBlurEffects(audioBlurNodesList) {
+function disableAllAudioBlurEffectNodes(audioBlurNodesList) {
   for (var i = 0; i < audioBlurNodesList.length; i++) {
     audioBlurNodesList[i].disable()
   }
@@ -104,49 +104,41 @@ function IsTheSameElementsInside(elements, target) {
   return false
 }
 
+function AudioFocusManager () {
+
+}
+
 window.addEventListener('load', function() {
   var focusMediaElementIndex = -1
   var mediaElements = getAllMediaElements()
-  var audioBlurEffectList = []
+  var audioBlurEffectNodeList = []
 
   var isPlaying = false
   var isFocusAudio = false
   for (var i = 0; i < mediaElements.length; i++) {
     var mediaElement = mediaElements[i]
 
-    mediaElement.addEventListener('play', function() {
-
-    })
-
-    mediaElement.addEventListener('ended', function() {
-
-    })
-
-    mediaElement.addEventListener('pause', function() {
-
-    })
-
-    audioBlurEffectList.push(
+    audioBlurEffectNodeList.push(
       new AudioBlurEffect(
         new (AudioContext || webkitAudioContext)(),
         mediaElement
       )
     )
   }
-  enableAllAudioBlurEffects(audioBlurEffectList)
 })
 
-window.addEventListener('ENABLE', function(event) {
-  enableAllAudioBlurEffects(audioBlurNodesList)
+window.addEventListener('enable', function(event) {
+  enableAllAudioBlurEffects(audioBlurEffectNodeList)
 })
 
-window.addEventListener('DISABLE', function(event) {
-  disableAllAudioBlurEffects(audioBlurNodesList)
+window.addEventListener('focuschanged', function(event) {
+  disableAllAudioBlurEffects()
 })
 
-window.addEventListener('UPDATE', function(event) {
-  console.log('This tab is updated');
+window.addEventListener('disable', function(event) {
+  disableAllAudioBlurEffects(audioBlurEffectNodeList)
 })
+
 
 // window.postMessage({
 //   type: "REQUEST",
