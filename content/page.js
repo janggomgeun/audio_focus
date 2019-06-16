@@ -74,21 +74,42 @@ function disableAllAudioBlurEffects(audioBlurNodesList) {
   }
 }
 
-function searchVideoElements() {
-
+function getAllVideoElements() {
+  return document.getElementsByTagName('video')
 }
 
-function searchAudioElements() {
+function getAllAudioElements() {
+  return document.getElementsByTagName('audio')
+}
 
+function getAllMediaElements() {
+  var medias = []
+  var videos = getAllVideoElements()
+  var audios = getAllAudioElements()
+  for (var i = 0; i < videos.length; i++) {
+    medias.push(videos[i])
+  }
+  for (var i = 0; i < audios.length; i++) {
+    medias.push(audios[i])
+  }
+  return medias
 }
 
 window.addEventListener('load', function() {
   var focusMediaElementIndex = -1
-  var mediaElements = document.getElementsByTagName('video')
+  var mediaElements = getAllMediaElements()
   var audioBlurNodesList = []
   for (var i = 0; i < mediaElements.length; i++) {
     var mediaElement = mediaElements[i]
-    audioBlurNodesList.push(new AudioBlurEffect(new (AudioContext || webkitAudioContext)(), mediaElement))
+    mediaElement.addEventListener('play', function() {
+
+    })
+    audioBlurNodesList.push(
+      new AudioBlurEffect(
+        new (AudioContext || webkitAudioContext)(),
+        mediaElement
+      )
+    )
   }
   enableAllAudioBlurEffects(audioBlurNodesList)
 })
