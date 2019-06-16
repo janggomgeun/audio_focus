@@ -13,8 +13,14 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     let enableEvent = new CustomEvent('ENABLE')
     window.dispatchEvent(enableEvent)
       break;
+    case "UPDATE":
+    let updateEvent = new CustomEvent('UPDATE')
+    window.dispatchEvent(updateEvent)
     default:
   }
 })
 
-window.addEventListener('message', function(event) {})
+//  event.data points a message object from a page script
+window.addEventListener('message', function(event) {
+  
+})

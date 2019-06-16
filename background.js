@@ -8,7 +8,11 @@ chrome.runtime.onConnect.addListener(function(port) {
 
 })
 
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  var tabId = activeInfo.tabId
-  console.log(activeInfo);
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  var message = {
+    type: "REQUEST",
+    what: "UPDATE"
+  }
+  chrome.tabs.sendMessage(tabId, message)
 })
+chrome.tabs.onActivated.addListener(function(activeInfo) {})

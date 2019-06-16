@@ -95,23 +95,45 @@ function getAllMediaElements() {
   return medias
 }
 
+function IsTheSameElementsInside(elements, target) {
+  for (var i = 0; i < elements.length; i++) {
+    if (elements[i] === target) {
+      return true
+    }
+  }
+  return false
+}
+
 window.addEventListener('load', function() {
   var focusMediaElementIndex = -1
   var mediaElements = getAllMediaElements()
-  var audioBlurNodesList = []
+  var audioBlurEffectList = []
+
+  var isPlaying = false
+  var isFocusAudio = false
   for (var i = 0; i < mediaElements.length; i++) {
     var mediaElement = mediaElements[i]
+
     mediaElement.addEventListener('play', function() {
 
     })
-    audioBlurNodesList.push(
+
+    mediaElement.addEventListener('ended', function() {
+
+    })
+
+    mediaElement.addEventListener('pause', function() {
+
+    })
+
+    audioBlurEffectList.push(
       new AudioBlurEffect(
         new (AudioContext || webkitAudioContext)(),
         mediaElement
       )
     )
   }
-  enableAllAudioBlurEffects(audioBlurNodesList)
+  enableAllAudioBlurEffects(audioBlurEffectList)
 })
 
 window.addEventListener('ENABLE', function(event) {
@@ -122,6 +144,11 @@ window.addEventListener('DISABLE', function(event) {
   disableAllAudioBlurEffects(audioBlurNodesList)
 })
 
-window.postMessage({
-
+window.addEventListener('UPDATE', function(event) {
+  console.log('This tab is updated');
 })
+
+// window.postMessage({
+//   type: "REQUEST",
+//   what: ""
+// })
