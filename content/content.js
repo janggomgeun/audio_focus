@@ -1,23 +1,30 @@
-var port = chrome.runtime.connect({name: "CONTENT"})
-port.onMessage.addListener(function(message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+  var broadcastEvent
+  console.log('content.js::' + message.what)
   switch (message.what) {
-    case "enable":
-      let enableEvent = new CustomEvent('enable')
-      window.dispatchEvent(enableEvent)
-    break;
+    case "focus":
+    broadcastEvent = new CustomEvent('focus')
+    window.dispatchEvent(broadcastEvent)
+    break
 
-    case "focuschanged":
-      let updateEvent = new CustomEvent('focuschanged')
-      window.dispatchEvent(updateEvent)
+    case "focusout":
+    broadcastEvent = new CustomEvent('focusout')
+    window.dispatchEvent(broadcastEvent)
+    break
+
+    case "update":
+    broadcastEvent = new CustomEvent('update')
+    window.dispatchEvent(broadcastEvent)
+    break
+
+    case "back":
+    broadcastEvent = new CustomEvent('return')
+    window.dispatchEvent(broadcastEvent)
+    break
 
     default:
-    break;
+    break
   }
-})
-
-//  event.data points a message object from a page script
-window.addEventListener('message', function(event) {
-  port.sendMessage(event.data)
 })
 
 var scriptElement = document.createElement('script')

@@ -62,15 +62,17 @@ AudioBlurEffectNode.prototype.disconnect = function (from, to) {
   from.disconnect(to)
 };
 
-function enableAllAudioBlurEffectNodes(audioBlurNodesList) {
-  for (var i = 0; i < audioBlurNodesList.length; i++) {
-    audioBlurNodesList[i].enable()
+var audioBlurEffectNodeList = []
+
+function enableAllAudioBlurEffectNodes() {
+  for (var i = 0; i < audioBlurEffectNodeList.length; i++) {
+    audioBlurEffectNodeList[i].enable()
   }
 }
 
-function disableAllAudioBlurEffectNodes(audioBlurNodesList) {
-  for (var i = 0; i < audioBlurNodesList.length; i++) {
-    audioBlurNodesList[i].disable()
+function disableAllAudioBlurEffectNodes() {
+  for (var i = 0; i < audioBlurEffectNodeList.length; i++) {
+    audioBlurEffectNodeList[i].disable()
   }
 }
 
@@ -104,14 +106,8 @@ function IsTheSameElementsInside(elements, target) {
   return false
 }
 
-function AudioFocusManager () {
-
-}
-
 window.addEventListener('load', function() {
-  var focusMediaElementIndex = -1
   var mediaElements = getAllMediaElements()
-  var audioBlurEffectNodeList = []
 
   var isPlaying = false
   var isFocusAudio = false
@@ -119,7 +115,7 @@ window.addEventListener('load', function() {
     var mediaElement = mediaElements[i]
 
     audioBlurEffectNodeList.push(
-      new AudioBlurEffect(
+      new AudioBlurEffectNode(
         new (AudioContext || webkitAudioContext)(),
         mediaElement
       )
@@ -127,20 +123,21 @@ window.addEventListener('load', function() {
   }
 })
 
-window.addEventListener('enable', function(event) {
-  enableAllAudioBlurEffects(audioBlurEffectNodeList)
+window.addEventListener('focus', function(event) {
+  console.log('page.js::focus');
+  enableAllAudioBlurEffectNodes()
 })
 
-window.addEventListener('focuschanged', function(event) {
-  disableAllAudioBlurEffects()
+window.addEventListener('focusout', function(event) {
+  console.log('page.js::focusout');
+  disableAllAudioBlurEffectNodes()
 })
 
-window.addEventListener('disable', function(event) {
-  disableAllAudioBlurEffects(audioBlurEffectNodeList)
+window.addEventListener('update', function(event) {
+  console.log('page.js::update');
 })
 
-
-// window.postMessage({
-//   type: "REQUEST",
-//   what: ""
-// })
+window.addEventListener('back', function(event) {
+  console.log('page.js::back');
+  disableAllAudioBlurEffectNodes()
+})

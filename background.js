@@ -1,22 +1,84 @@
+/* API Documentation
+ * https://developers.chrome.com/extensions/api_index
+ */
+
 chrome.runtime.onInstalled.addListener(function(details) {
   chrome.browserAction.setBadgeText({text:"OFF"})
   chrome.browserAction.setBadgeBackgroundColor({color:"#ff4040"})
-  // chrome.tabs.create({url: "intro.html"})
 })
+
+/*
+ * Status of tabs can be as following
+ */
+
+var onFocus = false
+function focus(tabId) {
+  chrome.tabs.query({}, function(tabs) {
+    for (var i=0; i<tabs.length; ++i) {
+      if (tabs[i].id === tabId) {
+        chrome.tabs.sendMessage(tabs[i].id, {
+          what: "focus"
+        });
+      } else {
+        chrome.tabs.sendMessage(tabs[i].id, {
+          what: "focusout"
+        });
+      }
+    }
+    onFocus = true
+  });
+}
+
+function back() {
+  chrome.tabs.query({}, function(tabs) {
+    for (var i=0; i<tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {
+        what: "back"
+      });
+    }
+    onFocus = false
+  });
+}
+
+var active = false
+function setActive(active) {
+  if (active) {
+    focus(activeTabId)
+  } else {
+    back()
+  }
+}
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-  console.log('browser action is clicked')
+  console.log('browser action clicked');
+  active = !active
+  setActive(active)
 })
 
-chrome.runtime.onConnect.addListener(function(port) {
-  port.onMessage.addListener(function(message) {
+var activeTabId
+chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  console.log('active tab id is initialized with the value ' + tabs[0].id);
+  activeTabId = tabs[0].id
+})
 
-  })
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  console.log('active tab has just changed to the ' + activeInfo.tabId);
+  activeTabId = activeInfo.tabId
+  if (active) {
+    focus(activeTabId)
+  }
 })
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  chrome.tabs.sendMessage(tabId, {
-    what: "focuschanged"
-  })
+  if (changeInfo.url) {
+    chrome.tabs.sendMessage(tabId, {
+      what: "update"
+    })
+  }
 })
-chrome.tabs.onActivated.addListener(function(activeInfo) {})
+
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  if (tabId === activeTabId) {
+    back()
+  }
+})
