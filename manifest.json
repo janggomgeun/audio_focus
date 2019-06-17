@@ -14,7 +14,7 @@
     "scripts": [
       "background.js"
     ],
-    "persistent": false
+    "persistent": true
   },
   "content_scripts": [
     {
@@ -32,17 +32,7 @@
     },
     "default_title": "Audio Focus"
   },
-  "options_ui": {
-    "page": "options/options.html",
-    "open_in_tab": true
-  },
   "minimum_chrome_version": "32.0.0",
-  /* "storage": {
-    "managed_schema": "schema.json"
-  }, */
-  "chrome_url_overrides" : {
-      "newtab": "override/override.html"
-  },
   "web_accessible_resources": ["content/page.js"],
   "manifest_version": 2
 }
