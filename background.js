@@ -43,7 +43,7 @@
 
      chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
        if (tabId === self.activeTabId) {
-         back()
+         self.back()
        }
      })
    }
