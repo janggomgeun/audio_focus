@@ -13,7 +13,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 var onFocus = false
 function focus(tabId) {
-  chrome.tabs.query({}, function(tabs) {
+  console.log('This extension will focus on the tab with the id ' + tabId);
+  chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function(tabs) {
     for (var i=0; i<tabs.length; ++i) {
       if (tabs[i].id === tabId) {
         chrome.tabs.sendMessage(tabs[i].id, {
@@ -65,6 +66,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
   console.log('active tab has just changed to the ' + activeInfo.tabId);
   activeTabId = activeInfo.tabId
   if (active) {
+    console.log('active tab id is ' + activeTabId);
     focus(activeTabId)
   }
 })

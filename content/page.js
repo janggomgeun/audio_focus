@@ -125,12 +125,12 @@ window.addEventListener('load', function() {
 
 window.addEventListener('focus', function(event) {
   console.log('page.js::focus');
-  enableAllAudioBlurEffectNodes()
+  disableAllAudioBlurEffectNodes()
 })
 
 window.addEventListener('focusout', function(event) {
   console.log('page.js::focusout');
-  disableAllAudioBlurEffectNodes()
+  enableAllAudioBlurEffectNodes()
 })
 
 window.addEventListener('update', function(event) {
