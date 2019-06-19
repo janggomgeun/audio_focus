@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     break
 
     case "af_back":
-    broadcastEvent = new CustomEvent('af_return')
+    broadcastEvent = new CustomEvent('af_back')
     window.dispatchEvent(broadcastEvent)
     break
 
