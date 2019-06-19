@@ -2,23 +2,23 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   var broadcastEvent
   console.log('content.js::' + message.what)
   switch (message.what) {
-    case "focus":
-    broadcastEvent = new CustomEvent('focus')
+    case "af_focus":
+    broadcastEvent = new CustomEvent('af_focus')
     window.dispatchEvent(broadcastEvent)
     break
 
-    case "focusout":
-    broadcastEvent = new CustomEvent('focusout')
+    case "af_focusout":
+    broadcastEvent = new CustomEvent('af_focusout')
     window.dispatchEvent(broadcastEvent)
     break
 
-    case "update":
-    broadcastEvent = new CustomEvent('update')
+    case "af_update":
+    broadcastEvent = new CustomEvent('af_update')
     window.dispatchEvent(broadcastEvent)
     break
 
-    case "back":
-    broadcastEvent = new CustomEvent('return')
+    case "af_back":
+    broadcastEvent = new CustomEvent('af_return')
     window.dispatchEvent(broadcastEvent)
     break
 

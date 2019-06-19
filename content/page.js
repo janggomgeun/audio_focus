@@ -1,143 +1,163 @@
-const EFFECT_STATUS_NONE = 0
-const EFFECT_STATUS_ENABLED = 1
-const EFFECT_STATUS_DISABLED = 2
 
-function AudioBlurEffectNode(audioContext, mediaElement) {
-  this.status = EFFECT_STATUS_NONE
-  this.mediaElement = mediaElement
-  this.audioContext = audioContext
-  this.build(this.audioContext, this.mediaElement)
+class AudioBlurNode {
+  constructor(audioContext) {
+    if (!audioContext)
+      console.error("AudioBlurNode::constructor(undefined)");
+
+    let biquadFilterNode = audioContext.createBiquadFilter()
+    biquadFilterNode.type = "lowpass"
+    biquadFilterNode.frequency.setValueAtTime(200, audioContext.currentTime)
+
+    let gainNode = audioContext.createGain()
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+
+    biquadFilterNode.connect(gainNode)
+
+    this.in = biquadFilterNode
+    this.out = gainNode
+  }
 }
 
-AudioBlurEffectNode.prototype.build = function (audioContext, mediaElement) {
+const AUDIO_SYSTEM_STATUS_NONE = 0
+const AUDIO_SYSTEM_STATUS_ENABLED = 1
+const AUDIO_SYSTEM_STATUS_DISABLED = 2
+class AudioBlurSystem {
+  constructor(audioContext, mediaElement) {
+    this.status = AUDIO_SYSTEM_STATUS_NONE
+    this.sourceNode = audioContext.createMediaElementSource(mediaElement)
+    this.audioBlurNode = new AudioBlurNode(audioContext)
+    this.destinationNode = audioContext.destination
+    this.disable()
+  }
 
-  this.sourceNode = audioContext.createMediaElementSource(mediaElement)
-
-  this.gainNode = audioContext.createGain()
-  this.gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-
-  this.biquadFilterNode = audioContext.createBiquadFilter()
-  this.biquadFilterNode.type = "lowpass"
-  // The cutoff frequency
-  this.biquadFilterNode.frequency.setValueAtTime(200, audioContext.currentTime)
-  // Q indicates how peaked the frequency is around the cutoff.
-  // The greater the value is, the greater is the peak.
-  // this.biquadFilterNode.q.setValueAtTime(25, audioContext.currentTime)
-
-  this.destinationNode = audioContext.destination
-};
-
-AudioBlurEffectNode.prototype.enable = function () {
-  switch (this.status) {
-    case EFFECT_STATUS_DISABLED:
-    this.disconnect(this.sourceNode, this.destinationNode)
+  enable() {
+    switch (this.status) {
+      case AUDIO_SYSTEM_STATUS_DISABLED:
+      this.disconnect(this.sourceNode, this.destinationNode)
       break;
-    default:
+      default:
+    }
+    this.connect(this.sourceNode, this.audioBlurNode.in)
+    this.connect(this.audioBlurNode.out, this.destinationNode)
+    this.status = AUDIO_SYSTEM_STATUS_ENABLED
   }
-  this.connect(this.sourceNode, this.biquadFilterNode)
-  this.connect(this.biquadFilterNode, this.gainNode)
-  this.connect(this.gainNode, this.destinationNode)
-  this.status = EFFECT_STATUS_ENABLED
-};
 
-AudioBlurEffectNode.prototype.disable = function () {
-  switch (this.status) {
-    case EFFECT_STATUS_ENABLED:
-    this.disconnect(this.sourceNode, this.biquadFilterNode)
-    this.disconnect(this.biquadFilterNode, this.gainNode)
-    this.disconnect(this.gainNode, this.destinationNode)
+  disable() {
+    switch (this.status) {
+      case AUDIO_SYSTEM_STATUS_ENABLED:
+      this.disconnect(this.sourceNode, this.audioBlurNode.in)
+      this.disconnect(this.audioBlurNode.out, this.destinationNode)
       break;
-    default:
+      default:
+    }
+    this.connect(this.sourceNode, this.destinationNode)
+    this.status = AUDIO_SYSTEM_STATUS_DISABLED
   }
 
-  this.connect(this.sourceNode, this.destinationNode)
-  this.status = EFFECT_STATUS_DISABLED
-};
+  connect(from, to) {
+    from.connect(to)
+  }
 
-AudioBlurEffectNode.prototype.connect = function (from, to) {
-  from.connect(to)
-};
-
-AudioBlurEffectNode.prototype.disconnect = function (from, to) {
-  from.disconnect(to)
-};
-
-var audioBlurEffectNodeList = []
-
-function enableAllAudioBlurEffectNodes() {
-  for (var i = 0; i < audioBlurEffectNodeList.length; i++) {
-    audioBlurEffectNodeList[i].enable()
+  disconnect(from, to) {
+    from.disconnect(to)
   }
 }
 
-function disableAllAudioBlurEffectNodes() {
-  for (var i = 0; i < audioBlurEffectNodeList.length; i++) {
-    audioBlurEffectNodeList[i].disable()
+class MediaElementManager {
+  constructor() {
+    this.mediaElements = undefined
+  }
+
+  find() {
+    this.mediaElements = this.findAllMediaElements()
+  }
+
+  findAllVideoElements() {
+    return document.getElementsByTagName('video')
+  }
+
+  findAllAudioElements() {
+    return document.getElementsByTagName('audio')
+  }
+
+  findAllMediaElements() {
+    var medias = []
+    var videos = this.findAllVideoElements()
+    var audios = this.findAllAudioElements()
+    for (var i = 0; i < videos.length; i++) {
+      medias.push(videos[i])
+    }
+    for (var i = 0; i < audios.length; i++) {
+      medias.push(audios[i])
+    }
+    return medias
+  }
+
+  isTheSameElementsInside(elements, target) {
+    for (var i = 0; i < elements.length; i++) {
+      if (elements[i] === target) {
+        return true
+      }
+    }
+    return false
   }
 }
 
-function getAllVideoElements() {
-  return document.getElementsByTagName('video')
-}
-
-function getAllAudioElements() {
-  return document.getElementsByTagName('audio')
-}
-
-function getAllMediaElements() {
-  var medias = []
-  var videos = getAllVideoElements()
-  var audios = getAllAudioElements()
-  for (var i = 0; i < videos.length; i++) {
-    medias.push(videos[i])
+class AudioBlurSystemMaster {
+  constructor() {
+    this.audioBlurSystems = []
+    this.mediaElementManager = new MediaElementManager()
+    this.isInitialized = false
   }
-  for (var i = 0; i < audios.length; i++) {
-    medias.push(audios[i])
-  }
-  return medias
-}
 
-function IsTheSameElementsInside(elements, target) {
-  for (var i = 0; i < elements.length; i++) {
-    if (elements[i] === target) {
-      return true
+  initialize() {
+    if (!this.isInitialized) {
+      this.mediaElementManager.find()
+      this.isInitialized = true
+    }
+    let mediaElements = this.mediaElementManager.mediaElements
+    for (var i = 0; i < mediaElements.length; i++) {
+      let mediaElement = mediaElements[i]
+      this.audioBlurSystems.push(
+        new AudioBlurSystem(
+          new (AudioContext || webkitAudioContext)(),
+          mediaElement
+        )
+      )
     }
   }
-  return false
+
+  enable() {
+    for (var i = 0; i < this.audioBlurSystems.length; i++) {
+      this.audioBlurSystems[i].enable()
+    }
+  }
+
+  disable() {
+    for (var i = 0; i < this.audioBlurSystems.length; i++) {
+      this.audioBlurSystems[i].disable()
+    }
+  }
 }
 
+let audioBlurSystemMaster
 window.addEventListener('load', function() {
-  var mediaElements = getAllMediaElements()
-
-  var isPlaying = false
-  var isFocusAudio = false
-  for (var i = 0; i < mediaElements.length; i++) {
-    var mediaElement = mediaElements[i]
-
-    audioBlurEffectNodeList.push(
-      new AudioBlurEffectNode(
-        new (AudioContext || webkitAudioContext)(),
-        mediaElement
-      )
-    )
-  }
+  console.log('loaded');
+  audioBlurSystemMaster = new AudioBlurSystemMaster()
+  audioBlurSystemMaster.initialize()
 })
 
-window.addEventListener('focus', function(event) {
-  console.log('page.js::focus');
-  disableAllAudioBlurEffectNodes()
+window.addEventListener('af_focus', function(event) {
+  console.log('page.js::focus')
+  audioBlurSystemMaster.disable()
 })
 
-window.addEventListener('focusout', function(event) {
+window.addEventListener('af_focusout', function(event) {
   console.log('page.js::focusout');
-  enableAllAudioBlurEffectNodes()
+  audioBlurSystemMaster.enable()
 })
 
-window.addEventListener('update', function(event) {
-  console.log('page.js::update');
-})
-
-window.addEventListener('back', function(event) {
+window.addEventListener('af_back', function(event) {
   console.log('page.js::back');
-  disableAllAudioBlurEffectNodes()
+  audioBlurSystemMaster.disable()
 })

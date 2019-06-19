@@ -39,7 +39,7 @@ class AudioFocus {
    chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
      if (changeInfo.url) {
        chrome.tabs.sendMessage(tabId, {
-         what: "update"
+         what: "af_update"
        })
      }
    })
@@ -58,11 +58,11 @@ class AudioFocus {
      for (var i=0; i<tabs.length; ++i) {
        if (tabs[i].id === tabId) {
          chrome.tabs.sendMessage(tabs[i].id, {
-           what: "focus"
+           what: "af_focus"
          })
        } else {
          chrome.tabs.sendMessage(tabs[i].id, {
-           what: "focusout"
+           what: "af_focusout"
          })
        }
      }
@@ -75,7 +75,7 @@ class AudioFocus {
    chrome.tabs.query({}, function(tabs) {
      for (var i=0; i<tabs.length; ++i) {
        chrome.tabs.sendMessage(tabs[i].id, {
-         what: "back"
+         what: "af_back"
        });
      }
      self.onFocus = false
