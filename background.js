@@ -22,8 +22,12 @@ class AudioFocus {
      self.active = !self.active
      if (self.active) {
        self.focus(self.activeTabId)
+       chrome.browserAction.setBadgeText({text:"ON"})
+       chrome.browserAction.setBadgeBackgroundColor({color:"#40ff40"})
      } else {
        self.back()
+       chrome.browserAction.setBadgeText({text:"OFF"})
+       chrome.browserAction.setBadgeBackgroundColor({color:"#ff4040"})
      }
    })
 
