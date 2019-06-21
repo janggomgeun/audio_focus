@@ -8,6 +8,8 @@ It has very simple structure. If you want focus on current tab's audio, then act
 - New Features
   - Manipulate strength of audio blur effect
   - Add a keyboard shortcut for activation/deactivation
+  - Make your own audio filters for the current tab
+  - Make your own audio filtrer for the inactive tabs
 - Improvements
 - Optimization
 - Bugfixes
