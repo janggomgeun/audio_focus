@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Enhance focus on audio on a current tab by applying audio blur effects to inactive tabs",
   "icons": {
-    "256": "icon-main.png"
+    "128": "icon_main_128x128.png"
   },
   "author": "Woong Geun Jang",
   "permissions": [
@@ -28,7 +28,7 @@
   ],
   "browser_action": {
     "default_icon": {
-      "256": "icon-main.png"
+      "128": "icon_main_128x128.png"
     },
     "default_title": "Audio Focus"
   },

@@ -9,8 +9,9 @@ class AudioFocus {
 
    let self = this
    chrome.runtime.onInstalled.addListener(function(details) {})
-   chrome.browserAction.setBadgeText({text:"OFF"})
-   chrome.browserAction.setBadgeBackgroundColor({color:"#ff4040"})
+   chrome.browserAction.setIcon({
+     path: "icon_browser_action_inactive_128x128.png"
+   })
 
    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
      console.log('active tab id is initialized with the value ' + tabs[0].id);
@@ -22,12 +23,14 @@ class AudioFocus {
      self.active = !self.active
      if (self.active) {
        self.focus(self.activeTabId)
-       chrome.browserAction.setBadgeText({text:"ON"})
-       chrome.browserAction.setBadgeBackgroundColor({color:"#40ff40"})
+       chrome.browserAction.setIcon({
+         path: "icon_browser_action_active_128x128.png"
+       })
      } else {
        self.back()
-       chrome.browserAction.setBadgeText({text:"OFF"})
-       chrome.browserAction.setBadgeBackgroundColor({color:"#ff4040"})
+       chrome.browserAction.setIcon({
+         path: "icon_browser_action_inactive_128x128.png"
+       })
      }
    })
 
