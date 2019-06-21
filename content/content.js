@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   var broadcastEvent
-  console.log('content.js::' + message.what)
   switch (message.what) {
     case "af_focus":
     broadcastEvent = new CustomEvent('af_focus')

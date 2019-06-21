@@ -70,23 +70,13 @@ class MediaElementManager {
   }
 
   update() {
-    console.log("page.js::MediaElementManager::update() starts");
-
     let newlyFoundMediaElements = this.findAllMediaElements()
-    console.log('newlyFoundMediaElements')
-    console.log(newlyFoundMediaElements)
-
     let originalMediaElements = this.originalMediaElements
-    console.log('originalMediaElements')
-    console.log(originalMediaElements)
-
     let newlyAddedMediaElements = newlyFoundMediaElements.filter(function(obj) {
       return originalMediaElements.indexOf(obj) == -1
     })
 
     this.diff = newlyAddedMediaElements
-    console.log(newlyAddedMediaElements);
-    console.log("page.js::MediaElementManager::update() ends");
 
     this.originalMediaElements = this.originalMediaElements.concat(this.diff)
   }
@@ -121,10 +111,8 @@ class AudioBlurSystemMaster {
   }
 
   update() {
-    console.log("page.js::AudioBlurSystemMaster::update() starts");
     this.mediaElementManager.update()
     let mediaElements = this.mediaElementManager.diff
-    console.log(mediaElements);
     for (var i = 0; i < mediaElements.length; i++) {
       let mediaElement = mediaElements[i]
       this.audioBlurSystems.push(
@@ -134,21 +122,16 @@ class AudioBlurSystemMaster {
         )
       )
     }
-    console.log("page.js::AudioBlurSystemMaster::update() ends");
   }
 
   enable() {
-    console.log("page.js::AudioBlurSystemMaster::enable() starts")
     for (var i = 0; i < this.audioBlurSystems.length; i++) {
-      console.log("page.js::AudioBlurSystemMaster::enable() loop")
       this.audioBlurSystems[i].enable()
     }
   }
 
   disable() {
-    console.log("page.js::AudioBlurSystemMaster::disable() starts");
     for (var i = 0; i < this.audioBlurSystems.length; i++) {
-      console.log("page.js::AudioBlurSystemMaster::disable() loops");
       this.audioBlurSystems[i].disable()
     }
   }
@@ -157,18 +140,15 @@ class AudioBlurSystemMaster {
 let audioBlurSystemMaster = new AudioBlurSystemMaster()
 
 window.addEventListener('af_focus', function(event) {
-  console.log('page.js::af_focus')
   audioBlurSystemMaster.update()
   audioBlurSystemMaster.disable()
 })
 
 window.addEventListener('af_focusout', function(event) {
-  console.log('page.js::af_focusout')
   audioBlurSystemMaster.update()
   audioBlurSystemMaster.enable()
 })
 
 window.addEventListener('af_back', function(event) {
-  console.log('page.js::af_back')
   audioBlurSystemMaster.disable()
 })
