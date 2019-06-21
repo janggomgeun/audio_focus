@@ -53,6 +53,25 @@ class AudioFocus {
        self.back()
      }
    })
+
+   chrome.commands.onCommand.addListener(function(command) {
+     switch (command) {
+       case "toggle-audiofocus":
+         self.active = !self.active
+         if (self.active) {
+           self.focus(self.activeTabId)
+           chrome.browserAction.setBadgeText({text:"ON"})
+           chrome.browserAction.setBadgeBackgroundColor({color:"#40ff40"})
+         } else {
+           self.back()
+           chrome.browserAction.setBadgeText({text:"OFF"})
+           chrome.browserAction.setBadgeBackgroundColor({color:"#ff4040"})
+         }
+         break;
+       default:
+
+     }
+   })
  }
 
  focus(tabId) {
