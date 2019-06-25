@@ -22,12 +22,12 @@ class AudioFocus {
      if (self.active) {
        self.focus(self.activeTabId)
        chrome.browserAction.setIcon({
-         path: "icon_browser_action_active_128x128.png"
+         path: "icon_browser_action_active_256x256.png"
        })
      } else {
        self.back()
        chrome.browserAction.setIcon({
-         path: "icon_browser_action_inactive_128x128.png"
+         path: "icon_browser_action_inactive_256x256.png"
        })
      }
    })
@@ -60,12 +60,12 @@ class AudioFocus {
          if (self.active) {
            self.focus(self.activeTabId)
            chrome.browserAction.setIcon({
-             path: "icon_browser_action_active_128x128.png"
+             path: "icon_browser_action_active_256x256.png"
            })
          } else {
            self.back()
            chrome.browserAction.setIcon({
-             path: "icon_browser_action_inactive_128x128.png"
+             path: "icon_browser_action_inactive_256x256.png"
            })
          }
          break;
