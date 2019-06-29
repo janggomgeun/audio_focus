@@ -1,7 +1,7 @@
 {
   "name": "Audio Focus",
   "version": "0.1.0",
-  "description": "Enhance focus on audio on a current tab by applying audio blur effects to inactive tabs",
+  "description": "Enables you to focus on sound from the current tab by blurring the other the inactive tabs",
   "icons": {
     "128": "icon_main_128x128.png"
   },
