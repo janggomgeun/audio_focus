@@ -8,7 +8,12 @@ class AudioFocus {
    this.onFocus = false
 
    let self = this
-   chrome.runtime.onInstalled.addListener(function(details) {})
+   chrome.runtime.onInstalled.addListener(function(details) {
+     chrome.tabs.create({
+       url: "intro/intro.html",
+       active: true
+     })
+   })
    chrome.browserAction.setIcon({
      path: "icons/icon_browser_action_inactive_128x128.png"
    })
