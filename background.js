@@ -10,7 +10,7 @@ class AudioFocus {
    let self = this
    chrome.runtime.onInstalled.addListener(function(details) {})
    chrome.browserAction.setIcon({
-     path: "icon_browser_action_inactive_128x128.png"
+     path: "icons/icon_browser_action_inactive_128x128.png"
    })
 
    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -22,12 +22,12 @@ class AudioFocus {
      if (self.active) {
        self.focus(self.activeTabId)
        chrome.browserAction.setIcon({
-         path: "icon_browser_action_active_128x128.png"
+         path: "icons/icon_browser_action_active_128x128.png"
        })
      } else {
        self.back()
        chrome.browserAction.setIcon({
-         path: "icon_browser_action_inactive_128x128.png"
+         path: "icons/icon_browser_action_inactive_128x128.png"
        })
      }
    })
@@ -60,12 +60,12 @@ class AudioFocus {
          if (self.active) {
            self.focus(self.activeTabId)
            chrome.browserAction.setIcon({
-             path: "icon_browser_action_active_128x128.png"
+             path: "icons/icon_browser_action_active_128x128.png"
            })
          } else {
            self.back()
            chrome.browserAction.setIcon({
-             path: "icon_browser_action_inactive_128x128.png"
+             path: "icons/icon_browser_action_inactive_128x128.png"
            })
          }
          break;

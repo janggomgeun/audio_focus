@@ -1,10 +1,12 @@
 {
   "name": "Audio Focus",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Enables you to focus on sound from the current tab by blurring the other the inactive tabs",
   "icons": {
-    "128": "icon_main_128x128.png",
-    "256": "icon_main_256x256.png"
+    "16": "icons/icon_main_16x16.png",
+    "48": "icons/icon_main_48x48.png",
+    "128": "icons/icon_main_128x128.png",
+    "256": "icons/icon_main_256x256.png"
   },
   "author": "Woong Geun Jang",
   "permissions": [
@@ -29,7 +31,10 @@
   ],
   "browser_action": {
     "default_icon": {
-      "128": "icon_main_128x128.png"
+      "16": "icons/icon_browser_action_active_16x16.png",
+      "48": "icons/icon_browser_action_active_48x48.png",
+      "128": "icons/icon_browser_action_active_128x128.png",
+      "256": "icons/icon_browser_action_active_256x256.png"
     },
     "default_title": "Audio Focus"
   },
