@@ -38,6 +38,7 @@
     },
     "default_title": "Audio Focus"
   },
+  "options_page": "options/options.html",
   "commands": {
     "toggle-audiofocus": {
       "suggested_key": {
