@@ -1,6 +1,6 @@
 {
   "name": "Audio Focus",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Focus on audio from the current tab by blurring distracting sounds from other tabs",
   "icons": {
     "16": "icons/icon_main_16x16.png",
