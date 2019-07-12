@@ -15,3 +15,6 @@ It has very simple structure. If you want focus on current tab's audio, then act
 - Bugfixes
 
 ## Release Notes
+### v0.1.3
+### Bugfixes
+- Not working when first installed because all pages are not refreshed
