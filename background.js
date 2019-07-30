@@ -6,6 +6,10 @@ class AudioFocus {
    this.active = false
    this.activeTabId = -1
    this.onFocus = false
+   this.options = {
+     focusTab: {},
+     otherTabs: {}
+   }
 
    let self = this
    chrome.runtime.onInstalled.addListener(function(details) {

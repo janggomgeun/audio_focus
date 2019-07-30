@@ -1,6 +1,6 @@
 {
   "name": "Audio Focus",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Focus on audio from the current tab by blurring distracting sounds from other tabs",
   "icons": {
     "16": "icons/icon_main_16x16.png",
@@ -42,7 +42,8 @@
   "commands": {
     "toggle-audiofocus": {
       "suggested_key": {
-        "default": "Alt+F"
+        "default": "Alt+S",
+        "mac": "Alt+F"
       },
       "description": "Toggle audio focus"
     }
