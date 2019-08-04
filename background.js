@@ -13,11 +13,11 @@ class AudioFocus {
 
    let self = this
    chrome.runtime.onInstalled.addListener(function(details) {
-     chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function(tabs) {
-       for (var i=0; i<tabs.length; ++i) {
-         chrome.tabs.reload(tabs[i].id, {bypassCache: true})
-       }
-     })
+     // chrome.tabs.query({url: ["http://*/*", "https://*/*"]}, function(tabs) {
+     //   for (var i=0; i<tabs.length; ++i) {
+     //     chrome.tabs.reload(tabs[i].id, {bypassCache: true})
+     //   }
+     // })
 
      chrome.tabs.create({
        url: "intro/intro.html",
