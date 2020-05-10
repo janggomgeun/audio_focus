@@ -10,7 +10,6 @@
   },
   "author": "Woong Geun Jang",
   "permissions": [
-    "storage",
     "tabs",
     "http://*/*",
     "https://*/*"
