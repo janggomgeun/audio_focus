@@ -22,7 +22,7 @@ class AudioFocus {
      })
 
      chrome.tabs.create({
-       url: "intro/intro.html",
+       url: "options/options.html",
        active: true
      })
    })

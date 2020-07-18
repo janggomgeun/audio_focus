@@ -31,18 +31,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 })
 
 window.addEventListener('message', function(event) {
-  console.log(JSON.stringify(event));
-  if (event.source !== window) {
-    return;
-  }
-
-  let message = event.data;
-
-  if (typeof message !== 'object' || message === null || !message.hello) {
-    return;
-  }
-
-  console.log('test succeed');
+  
 })
 
 var scriptElement = document.createElement('script')
