@@ -108,6 +108,7 @@ class AudioBlurSystemMaster {
     this.audioBlurSystems = []
     this.mediaElementManager = new MediaElementManager()
     this.isInitialized = false
+    
   }
 
   update() {
@@ -128,6 +129,7 @@ class AudioBlurSystemMaster {
     for (var i = 0; i < this.audioBlurSystems.length; i++) {
       this.audioBlurSystems[i].enable()
     }
+    window.postMessage({hello: 'world'}, '*')
   }
 
   disable() {
