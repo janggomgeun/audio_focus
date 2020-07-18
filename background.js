@@ -90,6 +90,11 @@ class AudioFocus {
 
      }
    })
+
+   chrome.storage.onChanged.addListener(function(changes, areaName) {
+     console.log(JSON.stringify(changes));
+     console.log(areaName);
+   })
  }
 
  focus(tabId) {
