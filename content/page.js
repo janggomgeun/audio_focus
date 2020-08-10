@@ -6,8 +6,9 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
 
 class AudioBlurNode {
   constructor(audioContext) {
-    if (!audioContext)
+    if (!audioContext) {
       console.error("AudioBlurNode::constructor(undefined)");
+    }
 
     let biquadFilterNode = audioContext.createBiquadFilter()
     biquadFilterNode.type = "lowpass"
@@ -73,7 +74,6 @@ class AudioBlurSystem {
 class PageMediaStateTracker {
 
   constructor(onPageMediaPlaying, onPageMediaStopped) {
-    console.log('PageMediaStateTracker::constructor');
     this.id = 0
     this.mediaElements = []
     this.numPlayingMedias = 0;
@@ -84,7 +84,6 @@ class PageMediaStateTracker {
   addMediaElement(mediaElement) {
     this.mediaElements.push(mediaElement)
     if (mediaElement.playing) {
-      console.log('there are playing media elements');
       this.increaseNumPlayingMedias()
     }
     this.track(mediaElement)
@@ -102,7 +101,6 @@ class PageMediaStateTracker {
     this.numPlayingMedias = 0;
     for (const mediaElement of this.mediaElements) {
       if(mediaElement.playing) {
-        console.log('there are playing media elements');
         this.numPlayingMedias++
       }
     }
@@ -117,22 +115,18 @@ class PageMediaStateTracker {
     const self = this
     const eventList = {
       'play': function() {
-        console.log('page.js play');
         self.increaseNumPlayingMedias()
       },
       'pause': function() {
-        console.log('page.js pause');
         self.decreaseNumPlayingMedias()
       },
       'ended': function() {
-        console.log('page.js ended');
         self.decreaseNumPlayingMedias()
       }
     }
 
     for (const eventName of Object.keys(eventList)) {
       const eventCallback = eventList[eventName]
-      console.log(`event ${eventName} is registered`);
       mediaElement.addEventListener(eventName, eventCallback)
     }
   }
@@ -142,7 +136,6 @@ class PageMediaStateTracker {
       this.onPageMediaPlaying()
     }
     this.numPlayingMedias++
-    console.log(`increaseNumPlayingMedias ${this.numPlayingMedias}`);
   }
 
   decreaseNumPlayingMedias() {
@@ -150,7 +143,6 @@ class PageMediaStateTracker {
     if (this.numPlayingMedias === 0) {
       this.onPageMediaStopped()
     }
-    console.log(`decreaseNumPlayingMedias ${this.numPlayingMedias}`);
   }
 }
 
@@ -205,14 +197,12 @@ class AudioBlurSystemMaster {
   }
 
   blur() {
-    console.log(`page.js >> AudioBlurSystemMaster >> blur()`);
     this.audioBlurSystems.forEach(function(audioBlurSystem) {
       audioBlurSystem.blur()
     })
   }
 
   clear() {
-    console.log(`page.js >> AudioBlurSystemMaster >> clear()`);
     this.audioBlurSystems.forEach(function(audioBlurSystem) {
       audioBlurSystem.clear()
     })
@@ -226,20 +216,14 @@ const audioBlurSystems = []
 const audioBlurSystemMaster = new AudioBlurSystemMaster(audioBlurSystems)
 
 const onPageMediaPlaying = function() {
-  console.log('onPageMediaPlaying');
-  console.log(`tabActive: ${tabActive}, options.focus: ${state.options.focus}`);
   if (tabActive && state.options.focus === 'focus-playing-media') {
-    console.log('onPageMediaPlaying >> focus-media-playing');
     const pageMediaPlayingEvent = new CustomEvent('af-page-media-playing')
     window.dispatchEvent(pageMediaPlayingEvent)
   }
 }
 
 const onPageMediaStopped = function() {
-  console.log('onPageMediaStopped');
-  console.log(`tabActive: ${tabActive}, options.focus: ${state.options.focus}`);
   if (tabActive && state.options.focus === 'focus-playing-media') {
-    console.log('onPageMediaStopped >> focus-media-playing');
     const pageMediaStoppedEvent = new CustomEvent('af-page-media-stopped')
     window.dispatchEvent(pageMediaStoppedEvent)
   }
@@ -273,12 +257,9 @@ new PageMessageHandler(window, {
   'af_tab_active': function (event) {
     tabActive = true
     if (!isInit) return false
-    console.log('active tab');
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
     switch(state.options.focus) {
       case 'always-focus':
       case 'focus-playing-media':
-        console.log(`page.js >> options.focus >> before update`);
         mediaElementManager.update()
         audioBlurSystemMaster.clear()
         pageMediaStateTracker.checkState()
@@ -288,9 +269,7 @@ new PageMessageHandler(window, {
   'af_tab_inactive': function (event) {
     tabActive = false
     if (!isInit) return false
-    console.log('inactive tab');
     mediaElementManager.update()
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
     switch(state.options.focus) {
 
       case 'always-focus':
@@ -303,7 +282,6 @@ new PageMessageHandler(window, {
     }
   },
   'af_update': function (event) {
-    console.log(`page.js >> af_update >> isInit: ${isInit}`);
     if (!isInit) return false
     mediaElementManager.update()
     pageMediaStateTracker.reset()
@@ -316,7 +294,6 @@ new PageMessageHandler(window, {
   'af_tab_options_always_focus': function (event) {
     if (!isInit) return false
     state.options.focus = 'always-focus'
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
     if (tabActive) {
       mediaElementManager.update()
       audioBlurSystemMaster.clear()
@@ -328,19 +305,15 @@ new PageMessageHandler(window, {
   'af_tab_options_focus_playing_media': function(event) {
     if (!isInit) return false
     state.options.focus = 'focus-playing-media'
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
-
     mediaElementManager.update()
     audioBlurSystemMaster.clear()
   },
   'af_tab_init_options_always_focus': function (event) {
-    console.log(`page.js >> af_tab_init_options_always_focus`);
     if (isInit) {
       return
     }
     isInit = true
     state.options.focus = 'always-focus'
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
     if (tabActive) {
       mediaElementManager.update()
       audioBlurSystemMaster.clear()
@@ -350,13 +323,11 @@ new PageMessageHandler(window, {
     }
   },
   'af_tab_init_options_focus_playing_media': function(event) {
-    console.log(`page.js >> af_tab_init_options_focus_playing_media`);
     if (isInit) {
       return
     }
     isInit = true
     state.options.focus = 'focus-playing-media'
-    console.log(`page.js >> options.focus: ${state.options.focus}`);
 
     mediaElementManager.update()
     audioBlurSystemMaster.clear()

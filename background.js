@@ -13,7 +13,6 @@ class Storage {
   async save(data) {
     return new Promise((resolve, reject) => {
       chrome.storage.sync.set(data, function (result) {
-        console.log(`save >> set >> data: ${JSON.stringify(data)} >> result: ${JSON.stringify(result)}`);
         resolve()
       })
     })
@@ -23,7 +22,6 @@ class Storage {
     let self = this
     return new Promise((resolve, reject) => {
       chrome.storage.sync.get([key], function (data) {
-        console.log(`get >> get >> key: ${key} >> data: ${JSON.stringify(data)}`);
         if (data[key]) {
           self.data[key] = data[key]
         }
@@ -36,7 +34,6 @@ class Storage {
     let self = this
     return new Promise(function(resolve, reject) {
       chrome.storage.sync.get(null, function(data) {
-        console.log(`getAll >> get >> all >> data: ${JSON.stringify(data)}`);
         resolve(data)
       })
     })
@@ -59,9 +56,7 @@ class Environment {
   }
 
   async load() {
-    console.log('Environment::load');
     const storedPref = await this.storage.getAll()
-    console.log(`storedPref: ${JSON.stringify(storedPref)}`)
     this.pref = storedPref ? storedPref : this.pref
   }
 
@@ -81,7 +76,6 @@ class Environment {
 
   async addOnOptionsChangedListener(onOptionsChanged) {
     this.storage.addOnChangedListener(function(changes, areaName) {
-      console.log(`storage onchanged >> ${JSON.stringify(changes)} >> ${areaName}`);
       if (changes.options) {
         onOptionsChanged(changes.options.newValue)
       }
@@ -175,7 +169,6 @@ class TabManager {
   async sendMessageToTab(tab, message) {
     return new Promise(function(resolve, reject) {
       chrome.tabs.sendMessage(tab.id, message, function(response) {
-        console.log(`sendMessageToTab >> sendMessage >> tabId: ${tab.id} >> message: ${JSON.stringify(message)} >> response: ${JSON.stringify(response)}`);
         resolve()
       })
     })
@@ -196,7 +189,6 @@ class TabManager {
 
 class AudioFocus {
   constructor() {
-    console.log('constructor');
     this.environment = new Environment()
     this.browserAction = new BrowserAction()
     this.tabManager = new TabManager()
@@ -205,12 +197,10 @@ class AudioFocus {
   }
 
   async init() {
-    console.log('init');
     await this.environment.load()
 
     const self = this
     chrome.runtime.onInstalled.addListener((details) => {
-      console.log('onInstalled');
       self.tabManager.getTabs({
         url: ["http://*/*", "https://*/*"]
       }).then((tabs) => {
@@ -224,7 +214,6 @@ class AudioFocus {
     })
 
     this.environment.addOnOptionsChangedListener(function(options) {
-      console.log(`init >> options: ${JSON.stringify(options)}`);
       self.broadcastOptionsChange(options)
     })
 
@@ -235,12 +224,10 @@ class AudioFocus {
     })
 
     this.browserAction.addOnClickListener(async function (tab) {
-      console.log('browserAction: onClick');
       await self.toggle()
     })
 
     this.tabManager.addOnActivatedListener(async function (activeInfo) {
-      console.log('onActivated');
       self.activeTabId = activeInfo.tabId
       if (self.environment.pref.on) {
         self.activate()
@@ -248,7 +235,6 @@ class AudioFocus {
     })
 
     this.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
-      console.log(`onUpdated >> tabId: ${tabId} >> changeInfo: ${JSON.stringify(changeInfo)}`);
       if (changeInfo.url) {
         await self.tabManager.sendMessageToTab(tab, {
           what: "af_update"
@@ -268,11 +254,8 @@ class AudioFocus {
 
     chrome.runtime.onMessage.addListener(
       (message, sender, sendResponse) => {
-        console.log('[background] chrome.runtime.onMessage.addListener()')
         switch (message.what) {
           case 'af-page-init':
-            console.log(`background.js >> af-page-init >> message.what: ${message.what}`);
-            console.log(`environment: ${JSON.stringify(this.environment)}`);
             sendResponse({
               options: this.environment.pref.options
             })
@@ -302,7 +285,6 @@ class AudioFocus {
   }
 
   async activate() {
-    console.log('activate')
     await this.broadcastActiveTabChange(this.activeTabId)
     await this.browserAction.setIcon({
       path: "icons/icon_browser_action_active_128x128.png"
@@ -349,7 +331,6 @@ class AudioFocus {
   }
 
   async broadcastOptionsChange(options) {
-    console.log(`broadcastOptionsChange`);
     const tabs = await this.tabManager.getAllTabs()
     switch (options.focus) {
       case 'always-focus':
@@ -373,7 +354,6 @@ class AudioFocus {
   }
 
   async deactivate() {
-    console.log('deactivate');
     const allTabs = await this.tabManager.getAllTabs()
     for (const tab of allTabs) {
       await this.tabManager.sendMessageToTab(tab, {
