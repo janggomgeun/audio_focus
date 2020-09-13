@@ -16,12 +16,14 @@ import { injectPageScript } from './web/util';
 // Log `title` of current active web page
 
 function sendMessageToWindow(message, window) {
+  console.log(`sendMessageToWindow >> message: ${JSON.stringify(message)}`);
   const broadcastEvent = new CustomEvent(message.what);
   window.dispatchEvent(broadcastEvent)
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  console.log(`onMessage >> message: ${JSON.stringify(message)}`);
   sendMessageToWindow(message, window)
 })
 
-injectPageScript(document, 'pageScript.js')
+injectPageScript(document, './pageScript.js')

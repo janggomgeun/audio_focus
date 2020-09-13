@@ -1,5 +1,4 @@
 import { default as AudioBlurSystemMaster } from './web/audio-blur-system-master';
-import { default as PageMediaStateTracker } from './web/page-media-state-tracker';
 import { default as MediaElementManager } from './web/media-element-manager';
 
 const audioBlurSystems = []
@@ -15,4 +14,15 @@ const mediaElementManager = new MediaElementManager(function (newMediaElements) 
   }
 })
 
-// window.addEventListener('message', )
+window.addEventListener('af-clear', function(event) {
+  console.log('af-clear');
+  alert('af-clear')
+  mediaElementManager.update()
+  audioBlurSystemMaster.clear()
+})
+
+window.addEventListener('af-blur', function(event) {
+  console.log('af-blur');
+  mediaElementManager.update()
+  audioBlurSystemMaster.blur()
+})
