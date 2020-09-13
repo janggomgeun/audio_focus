@@ -29,6 +29,14 @@ export default class TabManager {
         })
     }
 
+    async getTabById(tabId) {
+        return new Promise((resolve, reject) => {
+            chrome.tabs.get(tabId, function(tab) {
+                resolve(tab)
+            })
+        })
+    }
+
     async getTabs(query) {
         return new Promise((resolve, reject) => {
             chrome.tabs.query(query, function (tabs) {

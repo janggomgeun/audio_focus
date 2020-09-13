@@ -1,4 +1,3 @@
-export const BROWSER_ACTION_STATE = "browser_action_state";
 export const BROWSER_ACTION_STATE_OFF = "browser_action_state_off";
 export const BROWSER_ACTION_STATE_ON = "browser_action_state_on";
 
