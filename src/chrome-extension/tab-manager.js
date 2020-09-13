@@ -51,7 +51,6 @@ export default class TabManager {
             currentWindow: true
         }
         const tabs = await this.getTabs(query)
-        console.log(`getActiveTab >> tabs: ${JSON.stringify(tabs)}`);
         return tabs[0]
     }
 
@@ -67,6 +66,14 @@ export default class TabManager {
             chrome.tabs.executeScript(tab.id, {
                 file: "contentScript.js"
             }, function () {
+                resolve()
+            })
+        })
+    }
+
+    async sendMessageToTabById(tabId, message) {
+        return new Promise(function (resolve, reject) {
+            chrome.tabs.sendMessage(tabId, message, function (response) {
                 resolve()
             })
         })

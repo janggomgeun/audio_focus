@@ -1,4 +1,5 @@
 import { default as AudioBlurSystemMaster } from './web/audio-blur-system-master';
+import { default as AudioBlurSystem } from './web/audio-blur-system';
 import { default as MediaElementManager } from './web/media-element-manager';
 
 const audioBlurSystems = []
@@ -15,15 +16,11 @@ const mediaElementManager = new MediaElementManager(function (newMediaElements) 
 })
 
 window.addEventListener('af-clear', function(event) {
-  console.log('af-clear');
   mediaElementManager.update()
   audioBlurSystemMaster.clear()
 })
 
 window.addEventListener('af-blur', function(event) {
-  console.log('af-blur');
   mediaElementManager.update()
   audioBlurSystemMaster.blur()
 })
-
-console.log('===============================================================================');

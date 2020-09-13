@@ -41,63 +41,58 @@ class AudioFocus {
     chrome.storage.sync.get([EXTENSION_ACTIVE], async function (result) {
       self.active = result[EXTENSION_ACTIVE]
       await self.browserAction.setState(result[EXTENSION_ACTIVE] ? BROWSER_ACTION_STATE_ON : BROWSER_ACTION_STATE_OFF)
-    })
-
-    this.browserAction.addOnClickListener(async function (tab) {
-      const active = !self.active
-      return new Promise((resolve, reject) => {
-        chrome.storage.sync.set({ [EXTENSION_ACTIVE]: active }, function () {
-          self.active = active
-          if (self.active) {
-            console.log('browserAction >> activate()');
-            self.activate()
-          } else {
-            console.log('browserAction >> deactivate()');
-            self.deactivate()
-          }
-          self.browserAction.setState(self.active ? BROWSER_ACTION_STATE_ON : BROWSER_ACTION_STATE_OFF)
-          resolve()
+      self.browserAction.addOnClickListener(async function (tab) {
+        const active = !self.active
+        return new Promise((resolve, reject) => {
+          chrome.storage.sync.set({ [EXTENSION_ACTIVE]: active }, function () {
+            self.active = active
+            if (self.active) {
+              self.activate()
+            } else {
+              self.deactivate()
+            }
+            self.browserAction.setState(self.active ? BROWSER_ACTION_STATE_ON : BROWSER_ACTION_STATE_OFF)
+            resolve()
+          })
         })
       })
-    })
-
-    this.tabManager.addOnActivatedListener(async function (activeInfo) {
-      console.log(`activeInfo: ${JSON.stringify(activeInfo)}`)
-      const activeTab = self.tabManager.getTabById(activeInfo.tabId)
-      if (activeTab.url) {
-        if (activeTab.audible) {
-          this.blurInactiveTabs(self.activeTabId)
-        } else {
-          this.clearInactiveTabs(self.activeTabId)
+  
+      self.tabManager.addOnActivatedListener(async function (activeInfo) {
+        const activeTab = await self.tabManager.getTabById(activeInfo.tabId)
+        if (self.active && activeTab.url) {
+          if (activeTab.audible) {
+            self.clearActiveTab(activeTab.id)
+            self.blurInactiveTabs(activeTab.id)
+          } else {
+            self.blurActiveTab(activeTab.id)
+            self.clearInactiveTabs(activeTab.id)
+          }
         }
+      })
+  
+      self.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
+        if (self.active && tab.url && tab.active) {
+          if (tab.audible) {
+            self.clearActiveTab(tabId)
+            self.blurInactiveTabs(tabId)
+          } else {
+            self.blurActiveTab(tabId)
+            self.clearInactiveTabs(tabId)
+          }
+        }
+      })
+  
+      if (self.active) {
+        self.activate()
+      } else {
+        self.deactivate()
       }
     })
 
-    this.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
-      console.log(`tabId: ${tabId}`);
-      console.log(`changeInfo: ${JSON.stringify(changeInfo)}`);
-      console.log(`tab: ${JSON.stringify(tab)}`);
-      if (tab.url && tab.active) {
-        if (tab.audible) {
-          self.blurInactiveTabs(tabId)
-        } else {
-          self.clearInactiveTabs(tabId)
-        }
-      }
-    })
-
-    if (this.active) {
-      this.activate()
-    } else {
-      this.deactivate()
-    }
   }
 
   async activate() {
-    console.log(`activate`);
-    console.log(`activeTab: ${JSON.stringify(this.activeTabId)}`);
     const activeTab = await this.tabManager.getActiveTab()
-    console.log(`activeTab: ${JSON.stringify(activeTab)}`);
     if (activeTab.audible) {
       await this.blurInactiveTabs(activeTab.id)
     } else {
@@ -106,9 +101,7 @@ class AudioFocus {
 
     let self = this
     chrome.storage.sync.set({[EXTENSION_ACTIVE]: true}, async function() {
-      await self.browserAction.setIcon({
-        path: "icons/icon_browser_action_active_128x128.png"
-      })
+      await self.browserAction.setState(BROWSER_ACTION_STATE_ON)
     })
   }
 
@@ -116,42 +109,49 @@ class AudioFocus {
     await this.clearAllTabs()
     let self = this
     chrome.storage.sync.set({[EXTENSION_ACTIVE]: true}, async function() {
-      await self.browserAction.setIcon({
-        path: "icons/icon_browser_action_inactive_128x128.png"
-      })
+      await self.browserAction.setState(BROWSER_ACTION_STATE_OFF)
     })
   }
 
   async blurInactiveTabs(activeTabId) {
-    console.log(`blurInactiveTabs`)
     const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
         chrome.tabs.sendMessage(tab.id, {
-          what: "af_blur",
+          what: "af-blur",
         })
       }
     }
+  }
+
+  async blurActiveTab(activeTabId) {
+    chrome.tabs.sendMessageToTabById(activeTabId, {
+      what: "af-blur",
+    })
   }
 
   async clearInactiveTabs(activeTabId) {
-    console.log(`clearInactiveTabs(${activeTabId})`);
     const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
         chrome.tabs.sendMessage(tab.id, {
-          what: "af_clear",
+          what: "af-clear",
         })
       }
     }
   }
 
+  async clearActiveTab(activeTabId) {
+    await this.tabManager.sendMessageToTabById(activeTabId, {
+      what: "af-clear"
+    })
+  }
+
   async clearAllTabs(actieTabId) {
-    console.log('clearAllTabs');
     const allTabs = await this.tabManager.getAllTabs()
     for (const tab of allTabs) {
       await this.tabManager.sendMessageToTab(tab, {
-        what: "af_clear"
+        what: "af-clear"
       })
     }
   }

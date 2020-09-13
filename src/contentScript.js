@@ -16,20 +16,16 @@ import { injectPageScript } from './web/util';
 // Log `title` of current active web page
 
 function sendMessageToWindow(message, window) {
-  console.log(`sendMessageToWindow >> message: ${JSON.stringify(message)}`);
   const broadcastEvent = new CustomEvent(message.what);
   window.dispatchEvent(broadcastEvent)
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log(`onMessage >> message: ${JSON.stringify(message)}`);
   sendMessageToWindow(message, window)
 })
 
-console.log('injectPageScript');
 var scriptElement = document.createElement('script')
 scriptElement.src = chrome.extension.getURL('pageScript.js')
-console.log(`src: ${scriptElement.src}`);
 document.head.appendChild(scriptElement);
 scriptElement.onload = function () {
     scriptElement.remove();
