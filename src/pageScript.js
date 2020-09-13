@@ -1,6 +1,6 @@
-const { default: AudioBlurSystemMaster } = require('./web/audio-blur-system-master');
-const { default: PageMediaStateTracker } = require('./web/page-media-state-tracker');
-const { default: MediaElementManager } = require('./web/media-element-manager');
+import { default as AudioBlurSystemMaster } from './web/audio-blur-system-master';
+import { default as PageMediaStateTracker } from './web/page-media-state-tracker';
+import { default as MediaElementManager } from './web/media-element-manager';
 
 Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
   get: function () {
