@@ -30,4 +30,4 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   sendMessageToWindow(message, window)
 })
 
-injectPageScript(document, 'content/page.js')
+injectPageScript(document, 'pageScript.js')

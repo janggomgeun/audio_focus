@@ -1,119 +1,13 @@
 'use strict';
 
+const CommandManager = import('./chrome-extension/command-manager');
+const BrowserAction = import('./chrome-extension/browser-action');
+const TabManager = import('./chrome-extension/tab-manager');
+
 // With background scripts you can communicate with popup
 // and contentScript files.
 // For more information on background script,
 // See https://developer.chrome.com/extensions/background_pages
-
-class CommandManager {
-  addOnCommandListener(onCommand) {
-    chrome.commands.onCommand.addListener(onCommand)
-  }
-}
-
-class BrowserAction {
-  constructor(options) {}
-
-  async setIcon(details) {
-    return new Promise(function (resolve, reject) {
-      chrome.browserAction.setIcon(details, function () {
-        resolve()
-      })
-    })
-  }
-
-  addOnClickListener(onClicked) {
-    chrome.browserAction.onClicked.addListener(onClicked)
-  }
-}
-
-class TabManager {
-  constructor() {
-    this.tabs = null
-  }
-
-  async openOptionPage() {
-    const properties = {
-      url: "options/options.html",
-      active: true
-    }
-    await this.createTab(properties)
-  }
-
-  async createTab(properties) {
-    return new Promise(function (resolve, reject) {
-      chrome.tabs.create(properties, function () {
-        resolve()
-      })
-    })
-  }
-
-  async getAllTabs() {
-    return new Promise((resolve, reject) => {
-      chrome.tabs.query({
-        url: ["http://*/*", "https://*/*"]
-      }, function (tabs) {
-        resolve(tabs)
-      })
-    })
-  }
-
-  async getTabs(query) {
-    return new Promise((resolve, reject) => {
-      chrome.tabs.query(query, function (tabs) {
-        resolve(tabs)
-      })
-    })
-  }
-
-  async getActiveTab() {
-    const query = {
-      active: true,
-      currentWindow: true
-    }
-    const tabs = await this.getTabs(query)
-    return tabs[0]
-  }
-
-  async executeContentScripts(tabs) {
-    const self = this
-    return new Promise(function (resolve, reject) {
-      for (const tab of tabs) {
-        resolve(self.executeContentScript(tab))
-      }
-    })
-  }
-
-  async executeContentScript(tab) {
-    return new Promise(function (resolve, reject) {
-      chrome.tabs.executeScript(tab.id, {
-        file: "content/content.js"
-      }, function () {
-        resolve()
-      })
-    })
-  }
-
-  async sendMessageToTab(tab, message) {
-    return new Promise(function (resolve, reject) {
-      chrome.tabs.sendMessage(tab.id, message, function (response) {
-        resolve()
-      })
-    })
-  }
-
-  addOnActivatedListener(onActivated) {
-    chrome.tabs.onActivated.addListener(onActivated)
-  }
-
-  addOnRemovedListener(onRemoved) {
-    chrome.tabs.onRemoved.addListener(onRemoved)
-  }
-
-  addOnUpdatedListener(onUpdated) {
-    chrome.tabs.onUpdated.addListener(onUpdated)
-  }
-}
 
 class AudioFocus {
   constructor() {
@@ -136,10 +30,6 @@ class AudioFocus {
       }).then(() => {
         return self.tabManager.openOptionPage()
       })
-    })
-
-    this.environment.addOnOptionsChangedListener(function (options) {
-      self.broadcastOptionsChange(options)
     })
 
     await this.browserAction.setIcon({
@@ -197,18 +87,6 @@ class AudioFocus {
       });
   }
 
-  async toggle() {
-    const on = !this.environment.pref.on
-    await this.environment.updateOn(on)
-    if (on) {
-      const tab = await this.tabManager.getActiveTab()
-      this.activeTabId = tab.id
-      await this.activate()
-    } else {
-      await this.deactivate()
-    }
-  }
-
   async activate() {
     await this.broadcastActiveTabChange(this.activeTabId)
     await this.browserAction.setIcon({
@@ -239,22 +117,6 @@ class AudioFocus {
     }
   }
 
-  async broadcastActiveTabChange(activeTabId) {
-    const tabs = await this.tabManager.getAllTabs()
-    for (const tab of tabs) {
-      if (tab.id === activeTabId) {
-        chrome.tabs.sendMessage(tab.id, {
-          what: "af_tab_active",
-
-        })
-      } else {
-        chrome.tabs.sendMessage(tab.id, {
-          what: "af_tab_inactive"
-        })
-      }
-    }
-  }
-
   async deactivate() {
     const allTabs = await this.tabManager.getAllTabs()
     for (const tab of allTabs) {
@@ -269,7 +131,5 @@ class AudioFocus {
     await this.environment.updateOn(false)
   }
 }
-
-
 
 (new AudioFocus()).init()
