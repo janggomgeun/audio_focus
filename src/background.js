@@ -117,7 +117,7 @@ class AudioFocus {
     const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
-        chrome.tabs.sendMessage(tab.id, {
+        this.tabManager.sendMessageToTab(tab, {
           what: "af-blur",
         })
       }
@@ -125,7 +125,7 @@ class AudioFocus {
   }
 
   async blurActiveTab(activeTabId) {
-    chrome.tabs.sendMessageToTabById(activeTabId, {
+    this.tabManager.sendMessageToTabById(activeTabId, {
       what: "af-blur",
     })
   }
@@ -134,7 +134,7 @@ class AudioFocus {
     const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
-        chrome.tabs.sendMessage(tab.id, {
+        this.tabManager.sendMessageToTab(tab, {
           what: "af-clear",
         })
       }
