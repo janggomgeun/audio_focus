@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Audio Focus",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Focus on audio from the current tab by blurring distracting sounds from other tabs",
   "icons": {
     "16": "icons/icon_main_16x16.png",
@@ -31,17 +31,15 @@
     "https://*/*",
     "storage"
   ],
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "run_at": "document_idle",
-      "js": [
-        "contentScript.js"
-      ]
-    }
-  ],
+  "content_scripts": [{
+    "matches": [
+      "<all_urls>"
+    ],
+    "run_at": "document_idle",
+    "js": [
+      "contentScript.js"
+    ]
+  }],
   "commands": {
     "toggle-audiofocus": {
       "suggested_key": {
