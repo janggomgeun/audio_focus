@@ -58,7 +58,7 @@ export default class TabManager {
     async executeContentScript(tab) {
         return new Promise(function (resolve, reject) {
             chrome.tabs.executeScript(tab.id, {
-                file: "content/content.js"
+                file: "contentScript.js"
             }, function () {
                 resolve()
             })

@@ -1,8 +1,8 @@
 'use strict';
 
-const CommandManager = import('./chrome-extension/command-manager');
-const BrowserAction = import('./chrome-extension/browser-action');
-const TabManager = import('./chrome-extension/tab-manager');
+const { default: BrowserAction } = require('./chrome-extension/browser-action');
+const { default: TabManager } = require('./chrome-extension/tab-manager');
+const { default: CommandManager } = require('./chrome-extension/command-manager');
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -34,7 +34,7 @@ class AudioFocus {
 
     await this.browserAction.setIcon({
       // imageData: null,
-      path: this.environment.pref.on ? "icons/icon_browser_action_active_128x128.png" : "icons/icon_browser_action_inactive_128x128.png",
+      path: "icons/icon_browser_action_inactive_128x128.png"
       // tabId: undefined
     })
 
@@ -44,9 +44,6 @@ class AudioFocus {
 
     this.tabManager.addOnActivatedListener(async function (activeInfo) {
       self.activeTabId = activeInfo.tabId
-      if (self.environment.pref.on) {
-        self.activate()
-      }
     })
 
     this.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
@@ -71,9 +68,6 @@ class AudioFocus {
       (message, sender, sendResponse) => {
         switch (message.what) {
           case 'af-page-init':
-            sendResponse({
-              options: this.environment.pref.options
-            })
             break
 
           case 'af-page-media-playing':
@@ -133,3 +127,5 @@ class AudioFocus {
 }
 
 (new AudioFocus()).init()
+
+console.log('background.js::init()');
