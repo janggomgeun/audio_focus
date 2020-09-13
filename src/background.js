@@ -2,7 +2,6 @@
 
 const { default: BrowserAction } = require('./chrome-extension/browser-action');
 const { default: TabManager } = require('./chrome-extension/tab-manager');
-const { default: CommandManager } = require('./chrome-extension/command-manager');
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -13,7 +12,6 @@ class AudioFocus {
   constructor() {
     this.browserAction = new BrowserAction()
     this.tabManager = new TabManager()
-    this.commandManager = new CommandManager()
     this.activeTabId = -1
   }
 
@@ -51,16 +49,6 @@ class AudioFocus {
         await self.tabManager.sendMessageToTab(tab, {
           what: "af_update"
         })
-      }
-    })
-
-    this.commandManager.addOnCommandListener(async function (command) {
-      const COMMANDS = {
-        "toggle-audiofocus": self.toggle
-      }
-
-      if (COMMANDS[command]) {
-        await COMMANDS[command]()
       }
     })
 
@@ -129,3 +117,10 @@ class AudioFocus {
 (new AudioFocus()).init()
 
 console.log('background.js::init()');
+
+chrome.runtime.onMessageExternal.addListener(
+  function(request, sender, sendResponse) {
+    console.log('i got message');
+    console.log(`request: ${JSON.stringify(request)}`);
+  }
+)

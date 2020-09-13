@@ -48,11 +48,9 @@ export default class TabManager {
 
     async executeContentScripts(tabs) {
         const self = this
-        return new Promise(function (resolve, reject) {
-            for (const tab of tabs) {
-                resolve(self.executeContentScript(tab))
-            }
-        })
+        for (const tab of tabs) {
+            await self.executeContentScript(tab)
+        }
     }
 
     async executeContentScript(tab) {

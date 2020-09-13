@@ -31,6 +31,17 @@
     "https://*/*",
     "storage"
   ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_idle",
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ],
   "commands": {
     "toggle-audiofocus": {
       "suggested_key": {

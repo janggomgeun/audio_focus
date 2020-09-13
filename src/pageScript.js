@@ -1,7 +1,6 @@
-const AudioBlurSystemMaster = import('./web/audio-blur-system-master')
-const PageMediaStateTracker = import('./web/page-media-state-tracker')
-const MediaElementManager = import ('./web/media-element-manager')
-const PageMessageHandler = import('./web/page-message-handler')
+const { default: AudioBlurSystemMaster } = require('./web/audio-blur-system-master');
+const { default: PageMediaStateTracker } = require('./web/page-media-state-tracker');
+const { default: MediaElementManager } = require('./web/media-element-manager');
 
 Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
   get: function () {
@@ -41,3 +40,4 @@ const mediaElementManager = new MediaElementManager(function (newMediaElements) 
 
 const pageInit = new CustomEvent('af-page-init')
 window.dispatchEvent(pageInit)
+window.postMessage({ type: "FROM_PAGE", text: "Hello from the webpage!" }, "*");
