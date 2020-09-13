@@ -62,13 +62,13 @@ class AudioFocus {
     })
 
     this.tabManager.addOnActivatedListener(async function (activeInfo) {
-      console.log(`activeInfo: ${activeInfo}`)
+      console.log(`activeInfo: ${JSON.stringify(activeInfo)}`)
       const activeTab = self.tabManager.getTabById(activeInfo.tabId)
       if (activeTab.url) {
         if (activeTab.audible) {
-          this.blurInactiveTabs()
+          this.blurInactiveTabs(self.activeTabId)
         } else {
-          this.clearInactiveTabs()
+          this.clearInactiveTabs(self.activeTabId)
         }
       }
     })
@@ -79,9 +79,9 @@ class AudioFocus {
       console.log(`tab: ${JSON.stringify(tab)}`);
       if (tab.url && tab.active) {
         if (tab.audible) {
-          self.blurInactiveTabs()
+          self.blurInactiveTabs(tabId)
         } else {
-          self.clearInactiveTabs()
+          self.clearInactiveTabs(tabId)
         }
       }
     })
@@ -94,11 +94,14 @@ class AudioFocus {
   }
 
   async activate() {
-    const activeTab = this.tabManager.getActiveTab()
+    console.log(`activate`);
+    console.log(`activeTab: ${JSON.stringify(this.activeTabId)}`);
+    const activeTab = await this.tabManager.getActiveTab()
+    console.log(`activeTab: ${JSON.stringify(activeTab)}`);
     if (activeTab.audible) {
-      await this.blurInactiveTabs()
+      await this.blurInactiveTabs(activeTab.id)
     } else {
-      await this.clearInactiveTabs()
+      await this.clearInactiveTabs(activeTab.id)
     }
 
     let self = this
@@ -119,27 +122,27 @@ class AudioFocus {
     })
   }
 
-  async blurInactiveTabs() {
-    console.log(`blurInactiveTabs`);
-    const tabs = await this.tabManager.getTabs({
-      active: false
-    })
+  async blurInactiveTabs(activeTabId) {
+    console.log(`blurInactiveTabs`)
+    const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
-      chrome.tabs.sendMessage(tab.id, {
-        what: "af_blur",
-      })
+      if (tab.id !== activeTabId) {
+        chrome.tabs.sendMessage(tab.id, {
+          what: "af_blur",
+        })
+      }
     }
   }
 
-  async clearInactiveTabs() {
-    console.log(`clearInactiveTabs`);
-    const tabs = await this.tabManager.getTabs({
-      active: false
-    })
+  async clearInactiveTabs(activeTabId) {
+    console.log(`clearInactiveTabs(${activeTabId})`);
+    const tabs = await this.tabManager.getAllTabs()
     for (const tab of tabs) {
-      chrome.tabs.sendMessage(tab.id, {
-        what: "af_clear",
-      })
+      if (tab.id !== activeTabId) {
+        chrome.tabs.sendMessage(tab.id, {
+          what: "af_clear",
+        })
+      }
     }
   }
 

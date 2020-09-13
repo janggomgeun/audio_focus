@@ -52,16 +52,5 @@
     }
   },
   "minimum_chrome_version": "32.0.0",
-  "web_accessible_resources": ["pageScript.js"],
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "run_at": "document_idle",
-      "js": [
-        "contentScript.js"
-      ]
-    }
-  ]
+  "web_accessible_resources": ["pageScript.js"]
 }

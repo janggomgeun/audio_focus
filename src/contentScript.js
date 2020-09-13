@@ -26,4 +26,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   sendMessageToWindow(message, window)
 })
 
-injectPageScript(document, './pageScript.js')
+console.log('injectPageScript');
+var scriptElement = document.createElement('script')
+scriptElement.src = chrome.extension.getURL('pageScript.js')
+console.log(`src: ${scriptElement.src}`);
+document.head.appendChild(scriptElement);
+scriptElement.onload = function () {
+    scriptElement.remove();
+}

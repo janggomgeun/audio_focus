@@ -51,6 +51,7 @@ export default class TabManager {
             currentWindow: true
         }
         const tabs = await this.getTabs(query)
+        console.log(`getActiveTab >> tabs: ${JSON.stringify(tabs)}`);
         return tabs[0]
     }
 

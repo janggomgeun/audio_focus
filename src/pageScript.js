@@ -16,7 +16,6 @@ const mediaElementManager = new MediaElementManager(function (newMediaElements) 
 
 window.addEventListener('af-clear', function(event) {
   console.log('af-clear');
-  alert('af-clear')
   mediaElementManager.update()
   audioBlurSystemMaster.clear()
 })
@@ -26,3 +25,5 @@ window.addEventListener('af-blur', function(event) {
   mediaElementManager.update()
   audioBlurSystemMaster.blur()
 })
+
+console.log('===============================================================================');
