@@ -4,91 +4,12 @@ class CommandManager {
   }
 }
 
-class Storage {
-
-  constructor() {
-    this.data = {}
-  }
-
-  async save(data) {
-    return new Promise((resolve, reject) => {
-      chrome.storage.sync.set(data, function (result) {
-        resolve()
-      })
-    })
-  }
-
-  async get(key) {
-    let self = this
-    return new Promise((resolve, reject) => {
-      chrome.storage.sync.get([key], function (data) {
-        if (data[key]) {
-          self.data[key] = data[key]
-        }
-        resolve(data)
-      })
-    })
-  }
-
-  async getAll() { 
-    let self = this
-    return new Promise(function(resolve, reject) {
-      chrome.storage.sync.get(null, function(data) {
-        resolve(data)
-      })
-    })
-  }
-
-  addOnChangedListener(onChanged) {
-    chrome.storage.onChanged.addListener(onChanged)
-  }
-}
-
-class Environment {
-  constructor() {
-    this.storage = new Storage()
-    this.pref = {
-      on: false,
-      options: {
-        focus: "always-focus"
-      }
-    }
-  }
-
-  async load() {
-    const storedPref = await this.storage.getAll()
-    this.pref = storedPref ? storedPref : this.pref
-  }
-
-  async updateOn(on) {
-    await this.storage.save({
-      on,
-    })
-    this.pref.on = on
-  }
-
-  async updateOptions(options) {
-    await this.storage.save({
-      options,
-    })
-    this.pref.options = options
-  }
-
-  async addOnOptionsChangedListener(onOptionsChanged) {
-    this.storage.addOnChangedListener(function(changes, areaName) {
-      if (changes.options) {
-        onOptionsChanged(changes.options.newValue)
-      }
-    })
-  }
-}
-
 class BrowserAction {
   constructor(options) {}
 
   async setIcon(details) {
-    return new Promise(function(resolve, reject) {
-      chrome.browserAction.setIcon(details, function() {
+    return new Promise(function (resolve, reject) {
+      chrome.browserAction.setIcon(details, function () {
         resolve()
       })
     })
@@ -113,8 +34,8 @@ class TabManager {
   }
 
   async createTab(properties) {
-    return new Promise(function(resolve, reject) {
-      chrome.tabs.create(properties, function() {
+    return new Promise(function (resolve, reject) {
+      chrome.tabs.create(properties, function () {
         resolve()
       })
     })
@@ -149,7 +70,7 @@ class TabManager {
 
   async executeContentScripts(tabs) {
     const self = this
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       for (const tab of tabs) {
         resolve(self.executeContentScript(tab))
       }
@@ -157,18 +78,18 @@ class TabManager {
   }
 
   async executeContentScript(tab) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       chrome.tabs.executeScript(tab.id, {
         file: "content/content.js"
-      }, function() {
+      }, function () {
         resolve()
       })
     })
   }
 
   async sendMessageToTab(tab, message) {
-    return new Promise(function(resolve, reject) {
-      chrome.tabs.sendMessage(tab.id, message, function(response) {
+    return new Promise(function (resolve, reject) {
+      chrome.tabs.sendMessage(tab.id, message, function (response) {
         resolve()
       })
     })
@@ -189,7 +110,6 @@ class TabManager {
 
 class AudioFocus {
   constructor() {
-    this.environment = new Environment()
     this.browserAction = new BrowserAction()
     this.tabManager = new TabManager()
     this.commandManager = new CommandManager()
@@ -197,8 +117,6 @@ class AudioFocus {
   }
 
   async init() {
-    await this.environment.load()
-
     const self = this
     chrome.runtime.onInstalled.addListener((details) => {
       self.tabManager.getTabs({
@@ -206,14 +124,14 @@ class AudioFocus {
       }).then((tabs) => {
         /* 
          * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
-        */
+         */
         return self.tabManager.executeContentScripts(tabs)
       }).then(() => {
         return self.tabManager.openOptionPage()
       })
     })
 
-    this.environment.addOnOptionsChangedListener(function(options) {
+    this.environment.addOnOptionsChangedListener(function (options) {
       self.broadcastOptionsChange(options)
     })
 
@@ -231,7 +149,7 @@ class AudioFocus {
       self.activeTabId = activeInfo.tabId
       if (self.environment.pref.on) {
         self.activate()
-      } 
+      }
     })
 
     this.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
@@ -264,12 +182,12 @@ class AudioFocus {
           case 'af-page-media-playing':
             this.broadcastAudioPlaying(this.activeTabId)
             break
-    
+
           case 'af-page-media-stopped':
             this.broadcastAudioStopped(this.activeTabId)
             break
         }
-    });
+      });
   }
 
   async toggle() {
@@ -320,36 +238,13 @@ class AudioFocus {
       if (tab.id === activeTabId) {
         chrome.tabs.sendMessage(tab.id, {
           what: "af_tab_active",
-          
+
         })
       } else {
         chrome.tabs.sendMessage(tab.id, {
           what: "af_tab_inactive"
         })
       }
-    }
-  }
-
-  async broadcastOptionsChange(options) {
-    const tabs = await this.tabManager.getAllTabs()
-    switch (options.focus) {
-      case 'always-focus':
-        for (const tab of tabs) {
-          chrome.tabs.sendMessage(tab.id, {
-            what: "af_tab_options_always_focus",
-            options,
-          })
-        }
-        break
-
-      case 'focus-playing-media':
-        for (const tab of tabs) {
-          chrome.tabs.sendMessage(tab.id, {
-            what: "af_tab_options_focus_playing_media",
-            options,
-          })
-        }
-        break
     }
   }
 

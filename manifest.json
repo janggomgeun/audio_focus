@@ -15,22 +15,12 @@
     "https://*/*",
     "storage"
   ],
-  "background":{
+  "background": {
     "scripts": [
       "background.js"
     ],
     "persistent": true
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
-      "run_at": "document_end",
-      "js": ["content/content.js"]
-    }
-  ],
   "browser_action": {
     "default_icon": {
       "16": "icons/icon_browser_action_active_16x16.png",

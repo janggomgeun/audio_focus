@@ -1,6 +1,6 @@
 Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
-  get: function(){
-      return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+  get: function () {
+    return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
   }
 })
 
@@ -26,7 +26,7 @@ class AudioBlurNode {
 
 /* 
  * an AudioBlurSystem has only one media element  
-*/
+ */
 const AUDIO_SYSTEM_STATUS_NONE = 0
 const AUDIO_SYSTEM_STATUS_ENABLED = 1
 const AUDIO_SYSTEM_STATUS_DISABLED = 2
@@ -100,7 +100,7 @@ class PageMediaStateTracker {
   reset() {
     this.numPlayingMedias = 0;
     for (const mediaElement of this.mediaElements) {
-      if(mediaElement.playing) {
+      if (mediaElement.playing) {
         this.numPlayingMedias++
       }
     }
@@ -114,13 +114,13 @@ class PageMediaStateTracker {
   track(mediaElement) {
     const self = this
     const eventList = {
-      'play': function() {
+      'play': function () {
         self.increaseNumPlayingMedias()
       },
-      'pause': function() {
+      'pause': function () {
         self.decreaseNumPlayingMedias()
       },
-      'ended': function() {
+      'ended': function () {
         self.decreaseNumPlayingMedias()
       }
     }
@@ -156,7 +156,7 @@ class MediaElementManager {
   update() {
     let newAllMediaElements = this.findAllMediaElements()
     let oldAllMediaElements = this.mediaElements
-    this.newMediaElements = newAllMediaElements.filter(function(obj) {
+    this.newMediaElements = newAllMediaElements.filter(function (obj) {
       return oldAllMediaElements.indexOf(obj) == -1
     })
 
@@ -183,46 +183,35 @@ class MediaElementManager {
   }
 }
 
-class State {
-  constructor() {
-    this.options = {
-      focus: 'always-focus',
-    }
-  }
-}
-
 class AudioBlurSystemMaster {
   constructor(audioBlurSystems) {
     this.audioBlurSystems = audioBlurSystems
   }
 
   blur() {
-    this.audioBlurSystems.forEach(function(audioBlurSystem) {
+    this.audioBlurSystems.forEach(function (audioBlurSystem) {
       audioBlurSystem.blur()
     })
   }
 
   clear() {
-    this.audioBlurSystems.forEach(function(audioBlurSystem) {
+    this.audioBlurSystems.forEach(function (audioBlurSystem) {
       audioBlurSystem.clear()
     })
   }
 }
 
-let tabActive = false
-let isInit = false
-const state = new State()
 const audioBlurSystems = []
 const audioBlurSystemMaster = new AudioBlurSystemMaster(audioBlurSystems)
 
-const onPageMediaPlaying = function() {
+const onPageMediaPlaying = function () {
   if (tabActive && state.options.focus === 'focus-playing-media') {
     const pageMediaPlayingEvent = new CustomEvent('af-page-media-playing')
     window.dispatchEvent(pageMediaPlayingEvent)
   }
 }
 
-const onPageMediaStopped = function() {
+const onPageMediaStopped = function () {
   if (tabActive && state.options.focus === 'focus-playing-media') {
     const pageMediaStoppedEvent = new CustomEvent('af-page-media-stopped')
     window.dispatchEvent(pageMediaStoppedEvent)
@@ -230,11 +219,11 @@ const onPageMediaStopped = function() {
 }
 
 const pageMediaStateTracker = new PageMediaStateTracker(onPageMediaPlaying, onPageMediaStopped)
-const mediaElementManager = new MediaElementManager(function(newMediaElements) {
+const mediaElementManager = new MediaElementManager(function (newMediaElements) {
   for (const newMediaElement of newMediaElements) {
     audioBlurSystems.push(
       new AudioBlurSystem(
-        new (AudioContext || webkitAudioContext)(),
+        new(AudioContext || webkitAudioContext)(),
         newMediaElement
       )
     )
@@ -245,104 +234,13 @@ const mediaElementManager = new MediaElementManager(function(newMediaElements) {
 class PageMessageHandler {
   constructor(window, eventList) {
     this.window = window
-    
+
     for (const eventName of Object.keys(eventList)) {
-      const eventCallback = eventList[eventName] 
+      const eventCallback = eventList[eventName]
       window.addEventListener(eventName, eventCallback)
     }
   }
 }
-
-new PageMessageHandler(window, {
-  'af_tab_active': function (event) {
-    tabActive = true
-    if (!isInit) return false
-    switch(state.options.focus) {
-      case 'always-focus':
-      case 'focus-playing-media':
-        mediaElementManager.update()
-        audioBlurSystemMaster.clear()
-        pageMediaStateTracker.checkState()
-        break
-    }
-  },
-  'af_tab_inactive': function (event) {
-    tabActive = false
-    if (!isInit) return false
-    mediaElementManager.update()
-    switch(state.options.focus) {
-
-      case 'always-focus':
-        audioBlurSystemMaster.blur()
-        break
-
-      case 'focus-media-playing':
-        audioBlurSystemMaster.clear()
-        break
-    }
-  },
-  'af_update': function (event) {
-    if (!isInit) return false
-    mediaElementManager.update()
-    pageMediaStateTracker.reset()
-  },
-  'af_off': function (event) {
-    if (!isInit) return false
-    tabActive = false
-    audioBlurSystemMaster.clear()
-  },
-  'af_tab_options_always_focus': function (event) {
-    if (!isInit) return false
-    state.options.focus = 'always-focus'
-    if (tabActive) {
-      mediaElementManager.update()
-      audioBlurSystemMaster.clear()
-    } else {
-      mediaElementManager.update()
-      audioBlurSystemMaster.blur()
-    }
-  },
-  'af_tab_options_focus_playing_media': function(event) {
-    if (!isInit) return false
-    state.options.focus = 'focus-playing-media'
-    mediaElementManager.update()
-    audioBlurSystemMaster.clear()
-  },
-  'af_tab_init_options_always_focus': function (event) {
-    if (isInit) {
-      return
-    }
-    isInit = true
-    state.options.focus = 'always-focus'
-    if (tabActive) {
-      mediaElementManager.update()
-      audioBlurSystemMaster.clear()
-    } else {
-      mediaElementManager.update()
-      audioBlurSystemMaster.blur()
-    }
-  },
-  'af_tab_init_options_focus_playing_media': function(event) {
-    if (isInit) {
-      return
-    }
-    isInit = true
-    state.options.focus = 'focus-playing-media'
-
-    mediaElementManager.update()
-    audioBlurSystemMaster.clear()
-  },
-  'af_blur': function (event) {
-    if (!isInit) return false
-    mediaElementManager.update()
-    audioBlurSystemMaster.blur()
-  },
-  'af_clear': function (event) {
-    if (!isInit) return false
-    mediaElementManager.update()
-    audioBlurSystemMaster.clear()
-  }
-})
 
 const pageInit = new CustomEvent('af-page-init')
 window.dispatchEvent(pageInit)
