@@ -13,6 +13,7 @@ import { default as TabManager } from './chrome-extension/tab-manager';
 // See https://developer.chrome.com/extensions/background_pages
 
 const EXTENSION_ACTIVE = 'extension_active'
+const EXTENSION_ACTIVE_DEFAULT = true
 class AudioFocus {
   constructor() {
     this.browserAction = new BrowserAction({
@@ -20,7 +21,7 @@ class AudioFocus {
       [BROWSER_ACTION_STATE_ON]: 'icons/icon_browser_action_active_128x128.png'
     })
     this.tabManager = new TabManager()
-    this.active = false
+    this.active = EXTENSION_ACTIVE_DEFAULT
   }
 
   async init() {
@@ -39,7 +40,7 @@ class AudioFocus {
     })
 
     chrome.storage.sync.get([EXTENSION_ACTIVE], async function (result) {
-      self.active = result[EXTENSION_ACTIVE]
+      self.active = result[EXTENSION_ACTIVE] ? result[EXTENSION_ACTIVE] : EXTENSION_ACTIVE_DEFAULT
       await self.browserAction.setState(result[EXTENSION_ACTIVE] ? BROWSER_ACTION_STATE_ON : BROWSER_ACTION_STATE_OFF)
       self.browserAction.addOnClickListener(async function (tab) {
         const active = !self.active
