@@ -24,7 +24,7 @@
       "256": "icons/icon_browser_action_active_256x256.png"
     }
   },
-  "options_page": "options.html",
+  "options_page": "options/options.html",
   "permissions": [
     "tabs",
     "http://*/*",

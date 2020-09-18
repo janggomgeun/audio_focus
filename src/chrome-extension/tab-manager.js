@@ -5,7 +5,7 @@ export default class TabManager {
 
     async openOptionPage() {
         const properties = {
-            url: "options.html",
+            url: "options/options.html",
             active: true
         }
         await this.createTab(properties)
@@ -31,7 +31,7 @@ export default class TabManager {
 
     async getTabById(tabId) {
         return new Promise((resolve, reject) => {
-            chrome.tabs.get(tabId, function(tab) {
+            chrome.tabs.get(tabId, function (tab) {
                 resolve(tab)
             })
         })
