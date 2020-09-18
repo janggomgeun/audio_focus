@@ -9,9 +9,9 @@ export default class AudioBlurSystemMaster {
         })
     }
 
-    clear() {
+    focus() {
         this.audioBlurSystems.forEach(function (audioBlurSystem) {
-            audioBlurSystem.clear()
+            audioBlurSystem.focus()
         })
     }
 }

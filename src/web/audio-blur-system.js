@@ -25,7 +25,7 @@ export default class AudioBlurSystem {
         this.status = AUDIO_SYSTEM_STATUS_ENABLED
     }
 
-    clear() {
+    focus() {
         switch (this.status) {
             case AUDIO_SYSTEM_STATUS_ENABLED:
                 this.disconnect(this.sourceNode, this.audioBlurNode.in)

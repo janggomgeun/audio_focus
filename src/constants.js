@@ -1,0 +1,2 @@
+export const MESSAGE_AUDIO_BLUR = 'AF-BLUR';
+export const MESSAGE_AUDIO_FOCUS = 'AF-FOCUS';

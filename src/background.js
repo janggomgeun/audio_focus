@@ -5,7 +5,13 @@ import {
   BROWSER_ACTION_STATE_OFF,
   BROWSER_ACTION_STATE_ON
 } from './chrome-extension/browser-action';
-import { default as TabManager } from './chrome-extension/tab-manager';
+import {
+  default as TabManager
+} from './chrome-extension/tab-manager';
+import {
+  MESSAGE_AUDIO_BLUR,
+  MESSAGE_AUDIO_FOCUS
+} from './constants';
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -44,7 +50,9 @@ class AudioFocus {
       self.browserAction.addOnClickListener(async function (tab) {
         const active = !self.active
         return new Promise((resolve, reject) => {
-          chrome.storage.sync.set({ [EXTENSION_ACTIVE]: active }, function () {
+          chrome.storage.sync.set({
+            [EXTENSION_ACTIVE]: active
+          }, function () {
             self.active = active
             if (self.active) {
               self.activate()
@@ -56,7 +64,7 @@ class AudioFocus {
           })
         })
       })
-  
+
       self.tabManager.addOnActivatedListener(async function (activeInfo) {
         const activeTab = await self.tabManager.getTabById(activeInfo.tabId)
         if (self.active && activeTab.url) {
@@ -69,7 +77,7 @@ class AudioFocus {
           }
         }
       })
-  
+
       self.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
         if (self.active && tab.url && tab.active) {
           if (tab.audible) {
@@ -81,7 +89,7 @@ class AudioFocus {
           }
         }
       })
-  
+
       if (self.active) {
         self.activate()
       } else {
@@ -100,7 +108,9 @@ class AudioFocus {
     }
 
     let self = this
-    chrome.storage.sync.set({[EXTENSION_ACTIVE]: true}, async function() {
+    chrome.storage.sync.set({
+      [EXTENSION_ACTIVE]: true
+    }, async function () {
       await self.browserAction.setState(BROWSER_ACTION_STATE_ON)
     })
   }
@@ -108,7 +118,9 @@ class AudioFocus {
   async deactivate() {
     await this.clearAllTabs()
     let self = this
-    chrome.storage.sync.set({[EXTENSION_ACTIVE]: true}, async function() {
+    chrome.storage.sync.set({
+      [EXTENSION_ACTIVE]: true
+    }, async function () {
       await self.browserAction.setState(BROWSER_ACTION_STATE_OFF)
     })
   }
@@ -118,7 +130,7 @@ class AudioFocus {
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
         this.tabManager.sendMessageToTab(tab, {
-          what: "af-blur",
+          what: MESSAGE_AUDIO_BLUR,
         })
       }
     }
@@ -126,7 +138,7 @@ class AudioFocus {
 
   async blurActiveTab(activeTabId) {
     this.tabManager.sendMessageToTabById(activeTabId, {
-      what: "af-blur",
+      what: MESSAGE_AUDIO_BLUR,
     })
   }
 
@@ -135,7 +147,7 @@ class AudioFocus {
     for (const tab of tabs) {
       if (tab.id !== activeTabId) {
         this.tabManager.sendMessageToTab(tab, {
-          what: "af-clear",
+          what: MESSAGE_AUDIO_FOCUS,
         })
       }
     }
@@ -143,7 +155,7 @@ class AudioFocus {
 
   async clearActiveTab(activeTabId) {
     await this.tabManager.sendMessageToTabById(activeTabId, {
-      what: "af-clear"
+      what: MESSAGE_AUDIO_FOCUS
     })
   }
 
@@ -151,7 +163,7 @@ class AudioFocus {
     const allTabs = await this.tabManager.getAllTabs()
     for (const tab of allTabs) {
       await this.tabManager.sendMessageToTab(tab, {
-        what: "af-clear"
+        what: MESSAGE_AUDIO_FOCUS
       })
     }
   }
