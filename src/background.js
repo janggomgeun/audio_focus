@@ -3,7 +3,7 @@
 import {
   EXTENSION_ACTIVE,
   BROWSER_ACTION_STATE_ICONS
-} from './configuration';
+} from './config';
 
 import {
   BrowserAction,
