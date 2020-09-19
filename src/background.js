@@ -1,13 +1,20 @@
 'use strict';
 
 import {
+  EXTENSION_ACTIVE,
+  BROWSER_ACTION_STATE_ICONS
+} from './configuration';
+
+import {
   BrowserAction,
   BROWSER_ACTION_STATE_OFF,
   BROWSER_ACTION_STATE_ON
 } from './chrome-extension/browser-action';
+
 import {
   default as TabManager
 } from './chrome-extension/tab-manager';
+
 import {
   MESSAGE_AUDIO_BLUR,
   MESSAGE_AUDIO_FOCUS
@@ -18,13 +25,9 @@ import {
 // For more information on background script,
 // See https://developer.chrome.com/extensions/background_pages
 
-const EXTENSION_ACTIVE = 'extension_active'
 class AudioFocus {
   constructor() {
-    this.browserAction = new BrowserAction({
-      [BROWSER_ACTION_STATE_OFF]: 'icons/icon_browser_action_inactive_128x128.png',
-      [BROWSER_ACTION_STATE_ON]: 'icons/icon_browser_action_active_128x128.png'
-    })
+    this.browserAction = new BrowserAction(BROWSER_ACTION_STATE_ICONS)
     this.tabManager = new TabManager()
     this.active = false
   }
