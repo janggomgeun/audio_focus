@@ -104,38 +104,37 @@ class AudioFocus {
 
   async activate() {
     const activeTab = await this.tabManager.getActiveTab()
-    if (activeTab.audible) {
-      await this.blurInactiveTabs(activeTab.id)
-    } else {
-      await this.clearInactiveTabs(activeTab.id)
-    }
-
     let self = this
     chrome.storage.sync.set({
       [EXTENSION_ACTIVE]: true
-    }, async function () {
-      await self.browserAction.setState(BROWSER_ACTION_STATE_ON)
+    }, function () {
+      self.browserAction.setState(BROWSER_ACTION_STATE_ON)
+      if (activeTab.audible) {
+        self.blurInactiveTabs(activeTab.id)
+      } else {
+        self.clearInactiveTabs(activeTab.id)
+      }
     })
   }
 
   async deactivate() {
-    await this.clearAllTabs()
     let self = this
     chrome.storage.sync.set({
       [EXTENSION_ACTIVE]: true
-    }, async function () {
-      await self.browserAction.setState(BROWSER_ACTION_STATE_OFF)
+    }, function () {
+      self.clearAllTabs()
+      self.browserAction.setState(BROWSER_ACTION_STATE_OFF)
     })
   }
 
   async blurInactiveTabs(activeTabId) {
-    const tabs = await this.tabManager.getAllTabs()
+    const tabs = await this.tabManager.getTabs({
+      active: false
+    })
     for (const tab of tabs) {
-      if (tab.id !== activeTabId) {
-        this.tabManager.sendMessageToTab(tab, {
-          what: MESSAGE_AUDIO_BLUR,
-        })
-      }
+      this.tabManager.sendMessageToTab(tab, {
+        what: MESSAGE_AUDIO_BLUR,
+      })
     }
   }
 
@@ -146,13 +145,13 @@ class AudioFocus {
   }
 
   async clearInactiveTabs(activeTabId) {
-    const tabs = await this.tabManager.getAllTabs()
+    const tabs = await this.tabManager.getTabs({
+      active: false
+    })
     for (const tab of tabs) {
-      if (tab.id !== activeTabId) {
-        this.tabManager.sendMessageToTab(tab, {
-          what: MESSAGE_AUDIO_FOCUS,
-        })
-      }
+      this.tabManager.sendMessageToTab(tab, {
+        what: MESSAGE_AUDIO_FOCUS,
+      })
     }
   }
 

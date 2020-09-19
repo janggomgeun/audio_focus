@@ -11,3 +11,15 @@ export const BROWSER_ACTION_STATE_ICONS = {
 }
 
 export const EXTENSION_ACTIVE = 'extension_active'
+export const USER_PREFERENCES = 'user_preferences'
+
+export const FOCUS_MODE = 'focus_mode'
+export const FOCUS_MODE_CURRENT_TAB_ALWAYS = 'focus_mode_current_tab_always'
+export const FOCUS_MODE_CURRENT_TAB_AUTO = 'focus_mode_current_tab_auto'
+
+export const USER_SETTINGS = {
+  [EXTENSION_ACTIVE]: false,
+  [USER_PREFERENCES]: {
+    [FOCUS_MODE]: FOCUS_MODE_CURRENT_TAB_AUTO
+  }
+}
