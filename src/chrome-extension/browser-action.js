@@ -16,6 +16,18 @@ export class BrowserAction {
     })
   }
 
+  async setBadge(text, backgroundColor) {
+    return new Promise(function (resolve, reject) {
+      chrome.browserAction.setBadgeText({
+        text
+      })
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: backgroundColor
+      })
+      resolve()
+    })
+  }
+
   async setState(state) {
     this.state = state
     await this.setIcon({

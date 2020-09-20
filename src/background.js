@@ -41,14 +41,20 @@ class AudioFocus {
   async init() {
     const self = this
     chrome.runtime.onInstalled.addListener(async (details) => {
-      const tabs = await self.tabManager.getTabs({
-        url: ["http://*/*", "https://*/*"]
-      })
-      /* 
-       * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
-       */
-      self.tabManager.executeContentScripts(tabs)
-      self.tabManager.openPage('intro/intro.html')
+      const ON_INSTALLED_REASON_INSTALL = 'install'
+      const ON_INSTALLED_REASON_UPDATE = 'update'
+      if (details.reason === ON_INSTALLED_REASON_INSTALL) {
+        const tabs = await self.tabManager.getTabs({
+          url: ["http://*/*", "https://*/*"]
+        })
+        /* 
+         * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
+         */
+        self.tabManager.executeContentScripts(tabs)
+        self.tabManager.openPage('intro/intro.html')
+      } else if (details.reason === ON_INSTALLED_REASON_UPDATE) {
+        self.browserAction.setBadge('NEW', '#f00')
+      }
     })
 
     chrome.storage.sync.onChanged.addListener(function (changes, namespace) {
