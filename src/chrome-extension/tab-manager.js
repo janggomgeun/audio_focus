@@ -3,9 +3,9 @@ export default class TabManager {
         this.tabs = null
     }
 
-    async openOptionPage() {
+    async openPage(url) {
         const properties = {
-            url: "options/options.html",
+            url,
             active: true
         }
         await this.createTab(properties)

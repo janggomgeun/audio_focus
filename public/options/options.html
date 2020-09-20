@@ -10,77 +10,13 @@
 </head>
 
 <body>
-  <div class="header">
-  </div>
-  <div class="container">
-    <img src="images/icon.png" alt="">
-  </div>
-  <div class="container logo">
-    <h1>Audio <strong>Focus</strong></h1>
-  </div>
-  <div class="container">
-    <h2><strong>Focus on audio from the current tab</strong></h2>
-    <h2>by blurring distracting sounds</h2>
-    <h2>from other tabs</h2>
-    <br>
-    <h2><strong>Release Notes: v0.2.2</strong></h2>
-    <h3>New Features</h3>
-    <ul>
-      <li>
-        <p>- Automatic activation mode <strong>*Thanks to Michael Pfaus :D</strong></p>
-      </li>
-    </ul>
-  </div>
-  <br>
-  <div class="container">
-    <style>
-      .bmc-button img {
-        width: 27px !important;
-        margin-bottom: 1px !important;
-        box-shadow: none !important;
-        border: none !important;
-        vertical-align: middle !important;
-      }
-
-      .bmc-button {
-        line-height: 36px !important;
-        height: 37px !important;
-        text-decoration: none !important;
-        display: inline-flex !important;
-        color: #ffffff !important;
-        background-color: #FF813F !important;
-        border-radius: 3px !important;
-        border: 1px solid transparent !important;
-        padding: 1px 9px !important;
-        font-size: 22px !important;
-        letter-spacing: 0.6px !important;
-        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
-        -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
-        margin: 0 auto !important;
-        font-family: 'Cookie', cursive !important;
-        -webkit-box-sizing: border-box !important;
-        box-sizing: border-box !important;
-        -o-transition: 0.3s all linear !important;
-        -webkit-transition: 0.3s all linear !important;
-        -moz-transition: 0.3s all linear !important;
-        -ms-transition: 0.3s all linear !important;
-        transition: 0.3s all linear !important;
-      }
-
-      .bmc-button:hover,
-      .bmc-button:active,
-      .bmc-button:focus {
-        -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
-        text-decoration: none !important;
-        box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
-        opacity: 0.85 !important;
-        color: #ffffff !important;
-      }
-    </style>
-    <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank"
-      href="https://www.buymeacoffee.com/p2HItLBUg"><img
-        src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/BMC-btn-logo.svg" alt="Buy me a coffee"><span
-        style="margin-left:5px">Buy me a coffee</span></a>
+  <h1>Preferences</h1>
+  <h2>Focus mode</h2>
+  <div>
+    <input type="radio" name="mode" id="auto" value="auto" checked>
+    <label for="auto">Auto</label>
+    <input type="radio" name="mode" value="always">
+    <label for="always">Always</label>
   </div>
   <script src="./options.js"></script>
 </body>

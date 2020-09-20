@@ -34,17 +34,15 @@ class AudioFocus {
 
   async init() {
     const self = this
-    chrome.runtime.onInstalled.addListener((details) => {
-      self.tabManager.getTabs({
+    chrome.runtime.onInstalled.addListener(async (details) => {
+      const tabs = await self.tabManager.getTabs({
         url: ["http://*/*", "https://*/*"]
-      }).then((tabs) => {
-        /* 
-         * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
-         */
-        return self.tabManager.executeContentScripts(tabs)
-      }).then(() => {
-        return self.tabManager.openOptionPage()
       })
+      /* 
+       * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
+       */
+      await self.tabManager.executeContentScripts(tabs)
+      await self.tabManager.openPage('intro/intro.html')
     })
 
     chrome.storage.sync.get([EXTENSION_ACTIVE], async function (result) {
