@@ -41,8 +41,8 @@ class AudioFocus {
       /* 
        * when installed, the app won't execute conetent scripts automatically, thus, they must be added manually  
        */
-      await self.tabManager.executeContentScripts(tabs)
-      await self.tabManager.openPage('intro/intro.html')
+      self.tabManager.executeContentScripts(tabs)
+      self.tabManager.openPage('intro/intro.html')
     })
 
     chrome.storage.sync.get([EXTENSION_ACTIVE], async function (result) {
