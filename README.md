@@ -8,6 +8,16 @@ It has very simple structure. If you want focus on current tab's audio, then act
 
 # Release Notes
 
+## v0.3.0
+
+### Features
+
+- Add options page to configure focus mode
+
+### Improvements
+
+- Add a badge to notice updates
+
 ## v0.1.3
 
 ### Bugfixes
