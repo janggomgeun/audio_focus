@@ -3,30 +3,39 @@ export const BROWSER_ACTION_STATE_ON = "browser_action_state_on";
 
 export class BrowserAction {
 
-    constructor(iconsByState, options) {
-      this.iconsByState = {
-        [BROWSER_ACTION_STATE_OFF]: iconsByState[BROWSER_ACTION_STATE_OFF],
-        [BROWSER_ACTION_STATE_ON]: iconsByState[BROWSER_ACTION_STATE_ON]
-      }
-      this.state = undefined
-    }
-  
-    async setIcon(details) {
-      return new Promise(function (resolve, reject) {
-        chrome.browserAction.setIcon(details, function () {
-          resolve()
-        })
-      })
-    }
+  constructor(iconsByState, options) {
+    this.iconsByState = iconsByState
+    this.state = undefined
+  }
 
-    async setState(state) {
-      this.state = state
-      await this.setIcon({
-        path: this.iconsByState[this.state]
+  async setIcon(details) {
+    return new Promise(function (resolve, reject) {
+      chrome.browserAction.setIcon(details, function () {
+        resolve()
       })
-    }
-  
-    addOnClickListener(onClicked) {
-      chrome.browserAction.onClicked.addListener(onClicked)
-    }
+    })
+  }
+
+  async setBadge(text, backgroundColor) {
+    return new Promise(function (resolve, reject) {
+      chrome.browserAction.setBadgeText({
+        text
+      })
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: backgroundColor
+      })
+      resolve()
+    })
+  }
+
+  async setState(state) {
+    this.state = state
+    await this.setIcon({
+      path: this.iconsByState[this.state]
+    })
+  }
+
+  addOnClickListener(onClicked) {
+    chrome.browserAction.onClicked.addListener(onClicked)
+  }
 }
