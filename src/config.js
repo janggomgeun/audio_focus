@@ -19,7 +19,7 @@ export const FOCUS_MODE_CURRENT_TAB_ALWAYS = 'focus_mode_current_tab_always'
 export const FOCUS_MODE_CURRENT_TAB_AUTO = 'focus_mode_current_tab_auto'
 
 export const AUDIO_FOCUS_SCHEMA = {
-  [EXTENSION_ACTIVE]: false,
+  [EXTENSION_ACTIVE]: true,
   [USER_PREFERENCES]: {
     [FOCUS_MODE]: FOCUS_MODE_CURRENT_TAB_AUTO
   }
