@@ -11,7 +11,7 @@ export default class AudioBlurSystem {
         this.sourceNode = audioContext.createMediaElementSource(this.mediaElement)
         this.audioBlurNode = new AudioBlurNode(audioContext)
         this.destinationNode = audioContext.destination
-        this.clear()
+        this.focus()
     }
 
     blur() {

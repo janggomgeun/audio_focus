@@ -27,7 +27,7 @@ const mediaElementManager = new MediaElementManager(function (newMediaElements) 
 
 window.addEventListener(MESSAGE_AUDIO_FOCUS, function (event) {
   mediaElementManager.update()
-  audioBlurSystemMaster.clear()
+  audioBlurSystemMaster.focus()
 })
 
 window.addEventListener(MESSAGE_AUDIO_BLUR, function (event) {
