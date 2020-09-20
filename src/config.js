@@ -10,6 +10,7 @@ export const BROWSER_ACTION_STATE_ICONS = {
   [BROWSER_ACTION_STATE_ON]: 'icons/icon_browser_action_active_128x128.png'
 }
 
+export const EXTENSION_UPDATED_AT = 'extension_updated_at'
 export const EXTENSION_ACTIVE = 'extension_active'
 export const USER_PREFERENCES = 'user_preferences'
 

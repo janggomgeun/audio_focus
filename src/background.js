@@ -7,7 +7,8 @@ import {
   AUDIO_FOCUS_SCHEMA,
   FOCUS_MODE,
   FOCUS_MODE_CURRENT_TAB_AUTO,
-  FOCUS_MODE_CURRENT_TAB_ALWAYS
+  FOCUS_MODE_CURRENT_TAB_ALWAYS,
+  EXTENSION_UPDATED_AT
 } from './config';
 
 import {
@@ -24,6 +25,8 @@ import {
   MESSAGE_AUDIO_BLUR,
   MESSAGE_AUDIO_FOCUS
 } from './constants';
+
+import moment from 'moment';
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -53,15 +56,29 @@ class AudioFocus {
         self.tabManager.executeContentScripts(tabs)
         self.tabManager.openPage('intro/intro.html')
       } else if (details.reason === ON_INSTALLED_REASON_UPDATE) {
-        self.browserAction.setBadge('NEW', '#f00')
+        chrome.storage.sync.set({
+          [EXTENSION_UPDATED_AT]: moment().format('YYYY-MM-DD HH:mm:ss')
+        })
+        self.browserAction.setBadge('New', '#f00')
+      }
+    })
+
+    chrome.storage.sync.get([EXTENSION_UPDATED_AT], function (result) {
+      const updated_at = result[EXTENSION_UPDATED_AT] ? result[EXTENSION_UPDATED_AT] : '2019-07-12 00:00:00'
+      const twoWeeksAgo = moment().subtract(1, 'weeks')
+
+      if (twoWeeksAgo.isAfter(moment(updated_at, 'YYYY-MM-DD HH:mm:ss'))) {
+        self.browserAction.setBadge('', '#000')
       }
     })
 
     chrome.storage.sync.onChanged.addListener(function (changes, namespace) {
       console.log(`changes: ${JSON.stringify(changes)}`);
-      self.preferences = changes[USER_PREFERENCES].newValue
-      if (self.active) {
-        self.activate()
+      if (changes[USER_PREFERENCES]) {
+        self.preferences = changes[USER_PREFERENCES].newValue
+        if (self.active) {
+          self.activate()
+        }
       }
     })
 
