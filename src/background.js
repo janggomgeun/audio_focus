@@ -73,7 +73,6 @@ class AudioFocus {
     })
 
     chrome.storage.sync.onChanged.addListener(function (changes, namespace) {
-      console.log(`changes: ${JSON.stringify(changes)}`);
       if (changes[USER_PREFERENCES]) {
         self.preferences = changes[USER_PREFERENCES].newValue
         if (self.active) {
@@ -85,7 +84,6 @@ class AudioFocus {
     chrome.storage.sync.get([EXTENSION_ACTIVE, USER_PREFERENCES], async function (result) {
       if (!result[EXTENSION_ACTIVE] || !result[USER_PREFERENCES]) {
         chrome.storage.sync.set(AUDIO_FOCUS_SCHEMA, function () {
-          console.log('schema generated');
           self.active = AUDIO_FOCUS_SCHEMA[EXTENSION_ACTIVE]
           self.preferences = AUDIO_FOCUS_SCHEMA[USER_PREFERENCES]
           self.initialize(self.active, self.preferences)

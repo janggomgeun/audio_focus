@@ -9,7 +9,7 @@ async function loadPreferences() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get([USER_PREFERENCES], function (result) {
       preferences = result[USER_PREFERENCES]
-      console.log(`preferences: ${preferences}`)
+      currentMode = preferences[FOCUS_MODE]
       resolve()
     })
   })
@@ -18,27 +18,29 @@ async function loadPreferences() {
 async function savePreferences() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.set(preferences, function () {
-      console.log('saved')
       resolve()
     })
   })
 }
 
 function updatePreferencesView() {
-  console.log('updatePreferencesView');
+  modes.forEach((mode) => {
+    if (mode.value === currentMode) {
+      mode.checked = true
+    } else {
+      mode.checked = false
+    }
+  })
 }
 
 const modes = document.querySelectorAll('input[name="mode"]')
 modes.forEach((mode) => {
   mode.addEventListener('change', function () {
     currentMode = this.value
-    console.log(`currentMode: ${currentMode}`)
     chrome.storage.sync.set({
       [USER_PREFERENCES]: {
         [FOCUS_MODE]: currentMode
       }
-    }, function () {
-      console.log('saved');
     })
   })
 })

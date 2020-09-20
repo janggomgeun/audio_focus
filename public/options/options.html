@@ -5,20 +5,166 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Audio Focus</title>
-  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./options.css">
+  <style media="screen">
+    @import url('https://fonts.googleapis.com/css?family=Raleway:400,700&display=swap');
+
+    /* ----------------------------------------------------------------------------
+     * Box-sizing border-box
+     * ------------------------------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    /* html element 62.5% font-size for REM use */
+    html {
+      font-size: 62.5%;
+      height: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      font: 400 11px/1.4 sans-serif;
+      margin: 0;
+      background: #fff;
+      height: 100%;
+      min-height: 100%;
+      word-break: break-word;
+      -webkit-word-break: break-word;
+    }
+
+    h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 7em;
+      font-weight: 400;
+    }
+
+    strong {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 2em;
+      font-weight: 400;
+    }
+
+    h3 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.5em;
+      font-weight: 400;
+    }
+
+    p {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.5em;
+      font-weight: 400;
+    }
+
+    .header {
+      width: 100%;
+      height: 20%;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .logo {
+      user-select: none;
+    }
+
+    .preference {
+      padding: 10px;
+      display: inline-block;
+      border-radius: 4px;
+      border: #000 solid 1px;
+      text-align: start;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Preferences</h1>
-  <h2>Focus mode</h2>
-  <div>
-    <input type="radio" name="mode" id="auto" value="focus_mode_current_tab_auto" checked>
-    <label for="auto">Auto</label>
-    <input type="radio" name="mode" value="focus_mode_current_tab_always">
-    <label for="always">Always</label>
+  <div class="header">
+  </div>
+  <div class="container">
+    <img src="images/icon.png" alt="">
+  </div>
+  <div class="container logo">
+    <h1>Audio <strong>Focus</strong></h1>
+  </div>
+  <div class="container">
+    <h2><strong>Focus on audio from the current tab</strong></h2>
+    <h2>by blurring distracting sounds</h2>
+    <h2>from other tabs</h2>
+  </div>
+  <br>
+  <div class="container">
+    <div class="preference">
+
+      <h3>Focus mode</h3>
+      <input type="radio" name="mode" id="auto" value="focus_mode_current_tab_auto">
+      <label for="auto">Auto</label>
+      <br>
+      <input type="radio" name="mode" value="focus_mode_current_tab_always">
+      <label for="always">Always</label>
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <style>
+      .bmc-button img {
+        width: 27px !important;
+        margin-bottom: 1px !important;
+        box-shadow: none !important;
+        border: none !important;
+        vertical-align: middle !important;
+      }
+
+      .bmc-button {
+        line-height: 36px !important;
+        height: 37px !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        color: #ffffff !important;
+        background-color: #FF813F !important;
+        border-radius: 3px !important;
+        border: 1px solid transparent !important;
+        padding: 1px 9px !important;
+        font-size: 22px !important;
+        letter-spacing: 0.6px !important;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
+        -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+        margin: 0 auto !important;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+        -o-transition: 0.3s all linear !important;
+        -webkit-transition: 0.3s all linear !important;
+        -moz-transition: 0.3s all linear !important;
+        -ms-transition: 0.3s all linear !important;
+        transition: 0.3s all linear !important;
+      }
+
+      .bmc-button:hover,
+      .bmc-button:active,
+      .bmc-button:focus {
+        -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+        text-decoration: none !important;
+        box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+        opacity: 0.85 !important;
+        color: #ffffff !important;
+      }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank"
+      href="https://www.buymeacoffee.com/p2HItLBUg"><img
+        src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/BMC-btn-logo.svg" alt="Buy me a coffee"><span
+        style="margin-left:5px">Buy me a coffee</span></a>
   </div>
   <script src="./options.js"></script>
 </body>
-
-</html>
