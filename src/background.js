@@ -119,23 +119,26 @@ class AudioFocus {
 
     self.tabManager.addOnActivatedListener(async function (activeInfo) {
       const activeTab = await self.tabManager.getTabById(activeInfo.tabId)
-      if (self.active && activeTab.url) {
-        switch (self.preferences[FOCUS_MODE]) {
-          case FOCUS_MODE_CURRENT_TAB_AUTO:
-            if (activeTab.audible) {
+      chrome.windows.getCurrent(null, function (window) {
+        const isActiveTabOnCurrentWindow = activeTab.windowId === window.id
+        if (isActiveTabOnCurrentWindow && self.active && activeTab.url) {
+          switch (self.preferences[FOCUS_MODE]) {
+            case FOCUS_MODE_CURRENT_TAB_AUTO:
+              if (activeTab.audible) {
+                self.clearActiveTab(activeTab.id)
+                self.blurInactiveTabs(activeTab.id)
+              } else {
+                self.blurActiveTab(activeTab.id) /* Do we need to blur active tab? */
+                self.clearInactiveTabs(activeTab.id)
+              }
+              break
+            case FOCUS_MODE_CURRENT_TAB_ALWAYS:
               self.clearActiveTab(activeTab.id)
               self.blurInactiveTabs(activeTab.id)
-            } else {
-              self.blurActiveTab(activeTab.id) /* Do we need to blur active tab? */
-              self.clearInactiveTabs(activeTab.id)
-            }
-            break
-          case FOCUS_MODE_CURRENT_TAB_ALWAYS:
-            self.clearActiveTab(activeTab.id)
-            self.blurInactiveTabs(activeTab.id)
-            break
+              break
+          }
         }
-      }
+      })
     })
 
     self.tabManager.addOnUpdatedListener(async function (tabId, changeInfo, tab) {
