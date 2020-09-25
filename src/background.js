@@ -184,6 +184,7 @@ class AudioFocus {
           self.blurInactiveTabs(activeTab.id)
           break
       }
+      self.active = true
     })
   }
 
@@ -194,6 +195,7 @@ class AudioFocus {
     }, function () {
       self.clearAllTabs()
       self.browserAction.setState(BROWSER_ACTION_STATE_OFF)
+      self.active = false
     })
   }
 
